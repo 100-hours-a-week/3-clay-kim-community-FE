@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>아무 말 대잔치</title>
+
+  <!-- 공통 스타일 -->
+  <link rel="stylesheet" href="/components/layout/layout.css" />
+</head>
+<body>
+  <!-- 헤더 -->
+  <header class="header">
+    <div class="header-container">
+      <a href="/" class="header-logo">🎉 아무 말 대잔치</a>
+      <nav class="header-nav">
+        <a href="/pages/post/post.html">게시글</a>
+        <!-- <a href="/pages/about/about.html">소개</a> -->
+        <!-- <a href="/pages/contact/contact.html">문의</a> -->
+      </nav>
+      <div class="header-user" id="headerUser"></div>
+    </div>
+  </header>
+
+  <!-- 사이드바 -->
+  <aside class="sidebar">
+    <div class="sidebar-section">
+      <h3 class="sidebar-title">📌 메뉴</h3>
+      <ul>
+        <li><a href="/"><span class="sidebar-icon">🏠</span>홈</a></li>
+        <li><a href="/pages/post/post.html"><span class="sidebar-icon">📝</span>전체 게시글</a></li>
+      </ul>
+    </div>
+
+    <div class="sidebar-section">
+      <h3 class="sidebar-title">🔥 인기글</h3>
+      <ul>
+        <li><a href="/pages/latest/latest.html"><span class="sidebar-icon">🆕</span>최신글</a></li>
+        <li><a href="/pages/today/today.html"><span class="sidebar-icon">⭐</span>오늘 추천글</a></li>
+        <li><a href="/pages/week/week.html"><span class="sidebar-icon">🏆</span>이번주 추천글</a></li>
+      </ul>
+    </div>
+
+    <!-- 추가 메뉴가 필요하면 여기에 -->
+    <!-- 
+    <div class="sidebar-section">
+      <h3 class="sidebar-title">⚙️ 설정</h3>
+      <ul>
+        <li><a href="/pages/mypage.html"><span class="sidebar-icon">👤</span>마이페이지</a></li>
+        <li><a href="/pages/settings.html"><span class="sidebar-icon">⚙️</span>설정</a></li>
+      </ul>
+    </div>
+    -->
+  </aside>
+
+  <!-- 메인 컨텐츠 -->
+  <main class="main-content">
+    <!-- 페이지별 콘텐츠가 여기에 삽입됨 -->
+    <div id="content"></div>
+  </main>
+
+  <!-- 푸터 -->
+  <footer class="footer">
+    <p>© 2025 아무 말 대잔치 | <a href="#">이용약관</a> | <a href="#">개인정보처리방침</a></p>
+  </footer>
+
+  <!-- 공통 스크립트 -->
+  <script type="module" src="/components/layout/layout.js"></script>
+</body>
+</html>
