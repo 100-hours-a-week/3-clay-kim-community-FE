@@ -26,7 +26,7 @@ function attachEventListeners() {
         window.location.href = '/pages/login/login.html';
       }
     } else {
-      window.location.href = '/pages/post/write.html';
+      window.location.href = '/pages/post/postCreate.html';
     }
   });
 }

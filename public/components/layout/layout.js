@@ -67,6 +67,7 @@ class Layout {
    */
   initHeader() {
     this.userEmail = localStorage.getItem("userEmail");
+    this.userNickname = localStorage.getItem("userNickname");
     this.accessToken = localStorage.getItem("accessToken");
     this.renderHeader();
     this.attachEventListeners();
@@ -97,7 +98,7 @@ class Layout {
   renderLoggedIn() {
     return `
       <div class="header-user-info">
-        <span class="header-user-email">${this.userEmail || "사용자"}</span>
+        <span class="header-user-email">${this.userNickname || "닉네임"} / ${this.userEmail || "접속 아이디"}</span>
       </div>
       <button class="header-btn header-btn-logout" id="logoutBtn">로그아웃</button>
     `;
@@ -131,6 +132,7 @@ class Layout {
       localStorage.removeItem("accessToken");
       localStorage.removeItem("refreshToken");
       localStorage.removeItem("userEmail");
+      localStorage.removeItem("userNickname");
       // alert("로그아웃되었습니다.");
       window.location.href = "/";
     // }

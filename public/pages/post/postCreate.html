@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>게시글 작성 | 아무 말 대잔치</title>
+    <link rel="stylesheet" href="/components/layout/layout.css">
+    <link rel="stylesheet" href="/components/modal/modal.css">
+    <link rel="stylesheet" href="/pages/post/postCreate.css">
+</head>
+<body>
+    <div id="header-placeholder"></div>
+    <div id="sidebar-placeholder"></div>
+
+    <main class="main-content">
+        <div class="post-create-container">
+            <div class="post-create-header">
+                <h1>게시글 작성</h1>
+                <p class="post-create-description">자유롭게 글을 작성해보세요!</p>
+            </div>
+
+            <form class="post-create-form" id="postCreateForm">
+                <!-- 제목 입력 -->
+                <div class="form-group">
+                    <label for="postTitle" class="form-label">
+                        제목 <span class="required">*</span>
+                    </label>
+                    <input 
+                        type="text" 
+                        id="postTitle" 
+                        class="form-input" 
+                        placeholder="제목을 입력하세요 (최대 26자)"
+                        maxlength="26"
+                        required
+                    />
+                    <div class="form-help">
+                        <span id="titleCount">0</span> / 26
+                    </div>
+                </div>
+
+                <!-- 내용 입력 -->
+                <div class="form-group">
+                    <label for="postContent" class="form-label">
+                        내용 <span class="required">*</span>
+                    </label>
+                    <textarea 
+                        id="postContent" 
+                        class="form-textarea" 
+                        placeholder="내용을 입력하세요 (최대 1000자)"
+                        maxlength="1000"
+                        rows="15"
+                        required
+                    ></textarea>
+                    <div class="form-help">
+                        <span id="contentCount">0</span> / 1000
+                    </div>
+                </div>
+
+                <!-- 버튼 그룹 -->
+                <div class="form-actions">
+                    <button type="button" class="btn btn-cancel" id="btnCancel">
+                        취소
+                    </button>
+                    <button type="submit" class="btn btn-submit" id="btnSubmit">
+                        <span class="btn-icon">✏️</span>
+                        작성 완료
+                    </button>
+                </div>
+            </form>
+        </div>
+    </main>
+
+    <div id="footer-placeholder"></div>
+
+    <script src="/components/modal/modal.js"></script>
+    <script type="module" src="/components/layout/layout.js"></script>
+    <script type="module" src="/pages/post/postCreate.js"></script>
+</body>
+</html>

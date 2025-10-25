@@ -1,0 +1,264 @@
+/* postCreate.css - 게시글 작성 페이지 스타일 */
+
+.post-create-container {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 40px 20px;
+}
+
+.post-create-header {
+  margin-bottom: 40px;
+  text-align: center;
+}
+
+.post-create-header h1 {
+  font-size: 32px;
+  font-weight: 700;
+  color: #333;
+  margin-bottom: 12px;
+}
+
+.post-create-description {
+  font-size: 16px;
+  color: #666;
+  margin: 0;
+}
+
+/* 폼 스타일 */
+.post-create-form {
+  background-color: #ffffff;
+  border-radius: 12px;
+  padding: 40px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+.form-group {
+  margin-bottom: 32px;
+}
+
+.form-group:last-of-type {
+  margin-bottom: 40px;
+}
+
+.form-label {
+  display: block;
+  font-size: 15px;
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 10px;
+}
+
+.form-label .required {
+  color: #e74c3c;
+  margin-left: 4px;
+}
+
+/* 입력 필드 공통 스타일 */
+.form-input,
+.form-textarea {
+  width: 100%;
+  padding: 14px 16px;
+  font-size: 15px;
+  color: #333;
+  background-color: #f8f9fa;
+  border: 2px solid #e0e0e0;
+  border-radius: 8px;
+  transition: all 0.2s;
+  font-family: inherit;
+  box-sizing: border-box;
+}
+
+.form-input:focus,
+.form-textarea:focus {
+  outline: none;
+  background-color: #ffffff;
+  border-color: #007bff;
+  box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.1);
+}
+
+.form-input::placeholder,
+.form-textarea::placeholder {
+  color: #999;
+}
+
+/* 제목 입력 */
+.form-input {
+  height: 50px;
+}
+
+/* 내용 입력 */
+.form-textarea {
+  resize: vertical;
+  min-height: 300px;
+  line-height: 1.6;
+}
+
+/* 도움말 텍스트 */
+.form-help {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 8px;
+  font-size: 13px;
+  color: #999;
+}
+
+.form-help span {
+  color: #007bff;
+  font-weight: 500;
+}
+
+/* 버튼 그룹 */
+.form-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  padding-top: 20px;
+  border-top: 1px solid #e0e0e0;
+}
+
+.btn {
+  padding: 14px 32px;
+  font-size: 15px;
+  font-weight: 600;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  white-space: nowrap;
+}
+
+.btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.btn-cancel {
+  background-color: #f8f9fa;
+  color: #666;
+  border: 2px solid #e0e0e0;
+}
+
+.btn-cancel:hover:not(:disabled) {
+  background-color: #e9ecef;
+  border-color: #ced4da;
+}
+
+.btn-submit {
+  background-color: #007bff;
+  color: #ffffff;
+  box-shadow: 0 2px 4px rgba(0, 123, 255, 0.2);
+}
+
+.btn-submit:hover:not(:disabled) {
+  background-color: #0056b3;
+  box-shadow: 0 4px 8px rgba(0, 123, 255, 0.3);
+  transform: translateY(-1px);
+}
+
+.btn-submit:active:not(:disabled) {
+  transform: translateY(0);
+}
+
+.btn-icon {
+  font-size: 18px;
+}
+
+/* 로딩 상태 */
+.btn.loading {
+  position: relative;
+  color: transparent;
+}
+
+.btn.loading::after {
+  content: '';
+  position: absolute;
+  width: 16px;
+  height: 16px;
+  top: 50%;
+  left: 50%;
+  margin-left: -8px;
+  margin-top: -8px;
+  border: 2px solid #ffffff;
+  border-radius: 50%;
+  border-top-color: transparent;
+  animation: spinner 0.6s linear infinite;
+}
+
+@keyframes spinner {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* 에러 메시지 */
+.form-error {
+  color: #e74c3c;
+  font-size: 13px;
+  margin-top: 6px;
+  display: none;
+}
+
+.form-group.error .form-input,
+.form-group.error .form-textarea {
+  border-color: #e74c3c;
+  background-color: #fff5f5;
+}
+
+.form-group.error .form-error {
+  display: block;
+}
+
+/* 반응형 디자인 */
+@media (max-width: 768px) {
+  .post-create-container {
+    padding: 20px 16px;
+  }
+
+  .post-create-header h1 {
+    font-size: 24px;
+  }
+
+  .post-create-description {
+    font-size: 14px;
+  }
+
+  .post-create-form {
+    padding: 24px 20px;
+  }
+
+  .form-group {
+    margin-bottom: 24px;
+  }
+
+  .form-textarea {
+    min-height: 250px;
+  }
+
+  .form-actions {
+    flex-direction: column-reverse;
+    gap: 10px;
+  }
+
+  .btn {
+    width: 100%;
+    justify-content: center;
+    padding: 16px;
+  }
+}
+
+@media (max-width: 480px) {
+  .post-create-container {
+    padding: 16px 12px;
+  }
+
+  .post-create-header {
+    margin-bottom: 24px;
+  }
+
+  .post-create-form {
+    padding: 20px 16px;
+  }
+}

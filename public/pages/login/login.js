@@ -34,7 +34,7 @@ document.addEventListener("DOMContentLoaded", () => {
       const response = await fetch("http://localhost:8080/auth", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, password }),
+        body: JSON.stringify({ email, password}),
       });
 
       if (!response.ok) {
@@ -52,6 +52,7 @@ document.addEventListener("DOMContentLoaded", () => {
       if (accessToken) {
         localStorage.setItem("accessToken", accessToken);
         localStorage.setItem("userEmail", email);
+        localStorage.setItem("userNickname", result.data.nickname);
         
         console.log("로그인 성공");
         window.location.href = "/pages/post/post.html";
