@@ -15,14 +15,19 @@ document.addEventListener('DOMContentLoaded', () => {
 // 게시글 작성 버튼 이벤트
 function attachEventListeners() {
   const btnWrite = document.getElementById('btnWrite');
-  btnWrite.addEventListener('click', () => {
+  btnWrite.addEventListener('click', async () => {  // async 추가!
     const accessToken = localStorage.getItem('accessToken');
     if (!accessToken) {
-      alert('로그인이 필요한 서비스입니다.');
-      window.location.href = '/login';
-      return;
+      const confirmed = await window.modal.confirm(
+        '로그인이 필요한 서비스입니다.<br>로그인 페이지로 이동하시겠습니까?', 
+        '알림'
+      );
+      if (confirmed) {  // 확인 버튼을 눌렀을 때만 이동
+        window.location.href = '/pages/login/login.html';
+      }
+    } else {
+      window.location.href = '/pages/post/write.html';
     }
-    window.location.href = '/pages/post/write.html';
   });
 }
 
@@ -115,7 +120,7 @@ async function loadMore() {
     renderPagination();
   } catch (error) {
     console.error('게시글 로딩 실패:', error);
-    alert('게시글을 불러오는데 실패했습니다.');
+    await window.modal.alert('게시글을 불러오는데 실패했습니다.', '오류');
   }
 }
 
@@ -178,10 +183,9 @@ function formatTime(timestamp) {
   const diff = Math.floor((now - date) / 1000);
 
   if (diff < 60) return '방금 전';
-  if (diff < 3600) return `${date}분 전`;
-//   if (diff < 3600) return `${Math.floor(diff / 60)}분 전`;
+  if (diff < 3600) return `${Math.floor(diff / 60)}분 전`;
   if (diff < 86400) return `${Math.floor(diff / 3600)}시간 전`;
-  if (diff < 604800) return `${date}`;
+  if (diff < 604800) return `${Math.floor(diff / 604800)}일 전`;
   
   return date.toLocaleDateString('ko-KR', {
     year: 'numeric',
