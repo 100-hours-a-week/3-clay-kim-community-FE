@@ -66,7 +66,7 @@ class Modal {
    * @param {string} title - 모달 제목 (기본: '알림')
    * @returns {Promise<void>}
    */
-  alert(message, title = '알림') {
+  alert(message, title = '알림', button = '확인') {
     return new Promise((resolve) => {
       this.currentResolve = resolve;
       
@@ -75,7 +75,7 @@ class Modal {
       
       const footer = document.getElementById('modalFooter');
       footer.innerHTML = `
-        <button class="modal-btn modal-btn-primary" id="modalConfirm">확인</button>
+        <button class="modal-btn modal-btn-primary" id="modalConfirm">${button}</button>
       `;
 
       const confirmBtn = document.getElementById('modalConfirm');

@@ -151,6 +151,7 @@ async function createPost(title, content) {
     if (response.status === 401) {
       await window.modal.alert('로그인이 만료되었습니다.<br>다시 로그인해주세요.', '인증 오류');
       localStorage.removeItem('accessToken');
+      localStorage.removeItem('nickname');
       // localStorage.removeItem('refreshToken');
       localStorage.removeItem('userEmail');
       window.location.href = '/pages/login/login.html';

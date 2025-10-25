@@ -18,11 +18,12 @@ function attachEventListeners() {
   btnWrite.addEventListener('click', async () => {  // async 추가!
     const accessToken = localStorage.getItem('accessToken');
     if (!accessToken) {
-      const confirmed = await window.modal.confirm(
-        '로그인이 필요한 서비스입니다.<br>로그인 페이지로 이동하시겠습니까?', 
-        '알림'
+      const alerted = await window.modal.alert(
+        '로그인이 필요한 서비스입니다.', 
+        '알림',
+        '로그인'
       );
-      if (confirmed) {  // 확인 버튼을 눌렀을 때만 이동
+      if (alerted) {  // 확인 버튼을 눌렀을 때만 이동
         window.location.href = '/pages/login/login.html';
       }
     } else {
