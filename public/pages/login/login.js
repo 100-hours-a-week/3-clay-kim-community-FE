@@ -1,5 +1,20 @@
 document.addEventListener("DOMContentLoaded", () => {
   const form = document.getElementById("loginForm");
+  const errorMessage = document.getElementById("errorMessage");
+
+  // 에러 메시지 표시 함수
+  function showError(message) {
+    console.log("showError 호출:", message); // 디버깅용
+    errorMessage.textContent = message;
+    errorMessage.style.display = "block"; // CSS 클래스 대신 직접 스타일 적용
+    console.log("errorMessage element:", errorMessage); // 디버깅용
+  }
+
+  // 에러 메시지 숨김 함수
+  function hideError() {
+    errorMessage.textContent = "";
+    errorMessage.style.display = "none";
+  }
 
   form.addEventListener("submit", async (e) => {
     e.preventDefault();
@@ -7,8 +22,11 @@ document.addEventListener("DOMContentLoaded", () => {
     const email = document.getElementById("email").value.trim();
     const password = document.getElementById("password").value.trim();
 
+    // 기존 에러 메시지 초기화
+    hideError();
+
     if (!email || !password) {
-      alert("이메일과 비밀번호를 입력해주세요.");
+      showError("이메일과 비밀번호를 입력해주세요.");
       return;
     }
 
@@ -19,7 +37,10 @@ document.addEventListener("DOMContentLoaded", () => {
         body: JSON.stringify({ email, password }),
       });
 
-      if (!response.ok) throw new Error("로그인 실패");
+      if (!response.ok) {
+        showError("아이디 또는 비밀번호가 잘못 되었습니다. 아이디와 비밀번호를 정확히 입력해 주세요.");
+        return;
+      } 
 
       // 응답 본문에서 데이터 추출
       const result = await response.json();
@@ -31,17 +52,18 @@ document.addEventListener("DOMContentLoaded", () => {
       if (accessToken) {
         localStorage.setItem("accessToken", accessToken);
         localStorage.setItem("userEmail", email);
+        
+        console.log("로그인 성공");
+        window.location.href = "/pages/post/post.html";
       }
 
-      console.log("로그인 성공");
-
-      alert("로그인 성공!");
-      window.location.href = "/pages/post/post.html"; // 로그인 성공 시 이동
-
     } catch (err) {
-      console.error(err);
-    //   alert(err);
-      console.error("아이디와 비밀번호를 확인해주세요.");
+      console.error("로그인 에러:", err);
+      showError("서버 연결에 실패했습니다. 잠시 후 다시 시도해주세요.");
     }
   });
+
+  // 입력 필드에 focus 시 에러 메시지 숨김
+  document.getElementById("email").addEventListener("focus", hideError);
+  document.getElementById("password").addEventListener("focus", hideError);
 });

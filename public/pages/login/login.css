@@ -1,27 +1,35 @@
+/* ========== 기본 설정 ========== */
 body {
+  margin: 0;
   font-family: "Pretendard", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
   background-color: #f9fafb;
+}
+
+/* ========== 레이아웃 ========== */
+.login-wrapper {
   display: flex;
   align-items: center;
   justify-content: center;
-  height: 100vh;
-  margin: 0;
+  min-height: calc(100vh - 64px); /* 헤더 높이만큼 빼기 */
+  padding: 20px;
 }
 
 .login-container {
   background-color: #fff;
-  padding: 32px 40px;
+  padding: 32px 60px;
   border-radius: 12px;
   box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-  width: 320px;
+  width: 420px;
 }
 
+/* ========== 타이틀 ========== */
 h1 {
   text-align: center;
   margin-bottom: 24px;
   font-size: 24px;
 }
 
+/* ========== 폼 요소 ========== */
 .form-group {
   margin-bottom: 16px;
 }
@@ -39,6 +47,7 @@ input {
   border: 1px solid #ddd;
   border-radius: 6px;
   font-size: 14px;
+  box-sizing: border-box; /* padding이 width에 포함되도록 */
 }
 
 input:focus {
@@ -46,6 +55,7 @@ input:focus {
   outline: none;
 }
 
+/* ========== 버튼 ========== */
 button {
   width: 100%;
   padding: 12px;
@@ -63,6 +73,25 @@ button:hover {
   background-color: #357ab8;
 }
 
+button:disabled {
+  background-color: #aaa;
+  cursor: not-allowed;
+}
+
+/* ========== 에러 메시지 ========== */
+.error-message {
+  color: #dc3545;
+  font-size: 14px;
+  margin-bottom: 16px;
+  padding: 10px 12px;
+  background-color: #fff5f5;
+  border: 1px solid #ffebee;
+  border-radius: 4px;
+  display: none;
+  line-height: 1.5;
+}
+
+/* ========== 회원가입 링크 ========== */
 .register-link {
   text-align: center;
   margin-top: 16px;
