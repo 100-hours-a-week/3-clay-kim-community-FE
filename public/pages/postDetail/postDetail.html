@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>게시글 상세 | 아무 말 대잔치</title>
+    <link rel="stylesheet" href="/components/layout/layout.css">
+    <link rel="stylesheet" href="/pages/postDetail/postDetail.css">
+    <link rel="stylesheet" href="/components/modal/modal.css">
+</head>
+<body>
+    <div id="header-placeholder"></div>
+    <div id="sidebar-placeholder"></div>
+
+    <main class="main-content">
+        <div class="post-detail-container">
+            <!-- 로딩 상태 -->
+            <div id="loading" class="loading-state">
+                <div class="spinner"></div>
+                <p>게시글을 불러오는 중...</p>
+            </div>
+
+            <!-- 게시글 상세 -->
+            <div id="postDetail" class="post-detail" style="display: none;">
+                <!-- 게시글 헤더 -->
+                <div class="post-header">
+                    <h1 class="post-title" id="postTitle"></h1>
+                    <div class="post-meta">
+                        <div class="post-author">
+                            <span class="author-icon">👤</span>
+                            <span id="postAuthor"></span>
+                        </div>
+                        <div class="post-info">
+                            <span class="post-date" id="postDate"></span>
+                            <span class="divider">·</span>
+                            <span class="post-views">
+                                <span class="icon">조회수</span>
+                                <span id="postViews">0</span>
+                            </span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 게시글 본문 -->
+                <div class="post-content" id="postContent"></div>
+
+                <!-- 게시글 액션 -->
+                <div class="post-actions">
+                    <button class="btn-action btn-like" id="btnLike">
+                        <span class="icon">좋아요 ❤️</span>
+                        <span class="count" id="likeCount">0</span>
+                    </button>
+                    <div class="action-buttons">
+                        <button class="btn-secondary" id="btnEdit" style="display: none;">수정</button>
+                        <button class="btn-danger" id="btnDelete" style="display: none;">삭제</button>
+                    </div>
+                </div>
+
+                <!-- 댓글 섹션 -->
+                <div class="comment-section">
+                    <div class="comment-header">
+                        <h3>댓글 <span id="commentCount">0</span></h3>
+                    </div>
+
+                    <!-- 댓글 작성 -->
+                    <div class="comment-write" id="commentWrite">
+                        <textarea 
+                            id="commentInput" 
+                            placeholder="댓글을 입력하세요 (최대 500자)"
+                            maxlength="500"
+                            rows="3"
+                        ></textarea>
+                        <div class="comment-write-footer">
+                            <span class="comment-length">
+                                <span id="commentLength">0</span> / 500
+                            </span>
+                            <button class="btn-primary" id="btnCommentSubmit">댓글 작성</button>
+                        </div>
+                    </div>
+
+                    <!-- 댓글 목록 -->
+                    <div class="comment-list" id="commentList">
+                        <!-- 댓글이 여기에 렌더링됩니다 -->
+                    </div>
+                </div>
+
+                <!-- 목록으로 버튼 -->
+                <div class="post-footer">
+                    <button class="btn-secondary btn-large" id="btnList">
+                        목록으로
+                    </button>
+                </div>
+            </div>
+
+            <!-- 에러 상태 -->
+            <div id="errorState" class="error-state" style="display: none;">
+                <div class="error-icon">⚠️</div>
+                <p class="error-message">게시글을 불러오는데 실패했습니다.</p>
+                <button class="btn-primary" onclick="location.reload()">다시 시도</button>
+            </div>
+        </div>
+    </main>
+
+    <div id="footer-placeholder"></div>
+
+    <script src="/components/modal/modal.js"></script>
+    <script type="module" src="/components/layout/layout.js"></script>
+    <script type="module" src="/pages/postDetail/postDetail.js"></script>
+</body>
+</html>
