@@ -30,7 +30,7 @@ class Layout {
     if (footerPlaceholder) {
       footerPlaceholder.innerHTML = `
         <footer class="footer">
-          <p>© 2025 아무 말 대잔치 | <a href="http://localhost:8080/tos">이용약관</a> | <a href="#">개인정보처리방침</a></p>
+          <p>© 2025 아무 말 대잔치 | <a href="http://localhost:8080/tos-policy">이용약관</a> | <a href="/pages/privacyPolicy/privacyPolicy.html">개인정보처리방침</a></p>
         </footer>
       `;
     }
@@ -97,8 +97,24 @@ class Layout {
    */
   renderLoggedIn() {
     return `
-      <div class="header-user-info">
-        <span class="header-user-email">${this.userNickname || "닉네임"} / ${this.userEmail || "접속 아이디"}</span>
+      <div class="header-user-wrapper">
+        <div class="header-user-info">
+          <span class="header-user-email">${this.userNickname || "닉네임"} / ${this.userEmail || "접속 아이디"}</span>
+        </div>
+        <div class="user-dropdown">
+          <a href="/pages/myProfile/myProfile.html" class="dropdown-item">
+            <span class="dropdown-icon">👤</span>
+            <span>내 프로필</span>
+          </a>
+          <a href="/pages/myPosts/myPosts.html" class="dropdown-item">
+            <span class="dropdown-icon">📝</span>
+            <span>내 게시글</span>
+          </a>
+          <a href="/pages/myComments/myComments.html" class="dropdown-item">
+            <span class="dropdown-icon">💬</span>
+            <span>내 댓글</span>
+          </a>
+        </div>
       </div>
       <button class="header-btn header-btn-logout" id="logoutBtn">로그아웃</button>
     `;
