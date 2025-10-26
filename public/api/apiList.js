@@ -11,6 +11,8 @@ export const API_ENDPOINTS = {
     REGISTER: '/users',
     CHECK_EMAIL: (email) => `/users/email?email=${encodeURIComponent(email)}`,
     CHECK_NICKNAME: (nickname) => `/users/nickname?nickname=${encodeURIComponent(nickname)}`,
+    UPDATE_PASSWORD: '/users/password',
+    UPDATE_USER: (userId) => `/users/${userId}`,
   },
   
   // 게시글 관련
@@ -23,7 +25,7 @@ export const API_ENDPOINTS = {
     CREATE: '/posts',
     DETAIL: (id) => `/posts/${id}`,
     UPDATE: (id) => `/posts/${id}`,
-    DELETE: (id) => `/posts/${id}`,
+    DELETE: (id) => `/posts/${id}/deactivation`,
     STATUSES: '/posts/statuses',
   },
   
@@ -32,5 +34,9 @@ export const API_ENDPOINTS = {
     LIST: (postId) => `/posts/${postId}/comments`,
     CREATE: (postId) => `/posts/${postId}/comments`,
     DELETE: (postId, commentId) => `/posts/${postId}/comments/${commentId}`,
+  },
+
+  TOS: {
+    GET: '/tos',
   }
 };

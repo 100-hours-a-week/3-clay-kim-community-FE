@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>내 프로필 | 아무 말 대잔치</title>
+    <link rel="stylesheet" href="/components/layout/layout.css">
+    <link rel="stylesheet" href="/components/modal/modal.css">
+    <link rel="stylesheet" href="/pages/myProfile/myProfile.css">
+</head>
+<body>
+    <div id="header-placeholder"></div>
+    <div id="sidebar-placeholder"></div>
+
+    <main class="main-content">
+        <div class="profile-container">
+            <div class="profile-header">
+                <h1>내 프로필</h1>
+                <p class="profile-description">회원 정보를 수정할 수 있습니다.</p>
+            </div>
+
+            <!-- 탭 메뉴 -->
+            <div class="tab-menu">
+                <button class="tab-btn active" data-tab="info">
+                    <span class="tab-icon">👤</span>
+                    기본 정보
+                </button>
+                <button class="tab-btn" data-tab="password">
+                    <span class="tab-icon">🔒</span>
+                    비밀번호 변경
+                </button>
+            </div>
+
+            <!-- 탭 컨텐츠 영역 -->
+            <div class="tab-content-wrapper">
+                <!-- 기본 정보 수정 탭 -->
+                <div class="tab-content active" id="info-tab">
+                    <form class="profile-form" id="profileForm">
+                        <div class="form-group">
+                            <label for="email" class="form-label">이메일</label>
+                            <input 
+                                type="email" 
+                                id="email" 
+                                class="form-input" 
+                                disabled
+                                placeholder="이메일"
+                            />
+                            <p class="form-help">이메일은 변경할 수 없습니다.</p>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="nickname" class="form-label">
+                                닉네임 <span class="required">*</span>
+                            </label>
+                            <input 
+                                type="text" 
+                                id="nickname" 
+                                class="form-input" 
+                                placeholder="닉네임 (2~10자)"
+                                maxlength="10"
+                                required
+                            />
+                            <div id="nicknameError" class="form-message"></div>
+                        </div>
+
+                        <div class="form-actions">
+                            <button type="button" class="btn btn-cancel" id="btnCancel">
+                                취소
+                            </button>
+                            <button type="submit" class="btn btn-submit" id="btnSubmit">
+                                <span class="btn-icon">✓</span>
+                                저장하기
+                            </button>
+                        </div>
+                    </form>
+                    <!-- Danger Zone: 계정 탈퇴 -->
+                    <div class="danger-zone">
+                        <div class="danger-zone-header">
+                            <h3 class="danger-zone-title">
+                                <span class="danger-icon">⚠️</span>
+                                Danger Zone
+                            </h3>
+                        </div>
+                        <div class="danger-zone-body">
+                            <p class="danger-zone-description">
+                                계정을 삭제하면 <strong>모든 데이터가 영구적으로 삭제</strong>되며 복구할 수 없습니다.
+                            </p>
+                            <ul class="danger-zone-list">
+                                <li>작성한 모든 게시글</li>
+                                <li>작성한 모든 댓글</li>
+                                <li>좋아요 및 활동 기록</li>
+                                <li>회원 정보 (이메일, 닉네임)</li>
+                            </ul>
+                            <button type="button" class="btn btn-delete" id="btnDeleteAccount">
+                                <span class="btn-icon">🗑️</span>
+                                계정 탈퇴하기
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 비밀번호 변경 탭 -->
+                <div class="tab-content" id="password-tab">
+                    <form class="profile-form" id="passwordForm">
+                        <div class="form-group">
+                            <label for="currentPassword" class="form-label">
+                                현재 비밀번호 <span class="required">*</span>
+                            </label>
+                            <input 
+                                type="password" 
+                                id="currentPassword" 
+                                class="form-input" 
+                                placeholder="현재 비밀번호를 입력하세요"
+                                required
+                            />
+                        </div>
+
+                        <div class="form-group">
+                            <label for="newPassword" class="form-label">
+                                새 비밀번호 <span class="required">*</span>
+                            </label>
+                            <input 
+                                type="password" 
+                                id="newPassword" 
+                                class="form-input" 
+                                placeholder="새 비밀번호 (8~20자)"
+                                minlength="8"
+                                maxlength="20"
+                                required
+                            />
+                            <div id="passwordError" class="form-message"></div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="confirmPassword" class="form-label">
+                                새 비밀번호 확인 <span class="required">*</span>
+                            </label>
+                            <input 
+                                type="password" 
+                                id="confirmPassword" 
+                                class="form-input" 
+                                placeholder="새 비밀번호를 다시 입력하세요"
+                                required
+                            />
+                            <div id="confirmPasswordError" class="form-message"></div>
+                        </div>
+
+                        <div class="form-actions">
+                            <button type="button" class="btn btn-cancel" id="btnPasswordCancel">
+                                취소
+                            </button>
+                            <button type="submit" class="btn btn-submit" id="btnPasswordSubmit">
+                                <span class="btn-icon">🔒</span>
+                                비밀번호 변경
+                            </button>
+                        </div>
+                    </form>
+
+                    
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <div id="footer-placeholder"></div>
+
+    <script src="/components/modal/modal.js"></script>
+    <script type="module" src="/components/layout/layout.js"></script>
+    <script type="module" src="/pages/myProfile/myProfile.js"></script>
+</body>
+</html>

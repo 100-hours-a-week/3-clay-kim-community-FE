@@ -1,5 +1,5 @@
 // 게시글 상세 페이지
-import { get, post, del } from '/api/fetchApi.js';
+import { get, post, patch } from '/api/fetchApi.js';
 import { API_ENDPOINTS } from '/api/apiList.js';
 
 let postId = null;
@@ -223,8 +223,9 @@ async function handleDelete() {
 
   if (!confirmed) return;
 
-  const { error } = await del(
+  const { error } = await patch(
     API_ENDPOINTS.POSTS.DELETE(postId),
+    null,
     { auth: true, autoRedirect: true }
   );
 

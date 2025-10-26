@@ -1,0 +1,547 @@
+/* myProfile.css - 프로필 수정 페이지 */
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+.profile-container {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 40px 20px;
+}
+
+/* ===== 헤더 ===== */
+.profile-header {
+  margin-bottom: 32px;
+  text-align: center;
+}
+
+.profile-header h1 {
+  font-size: 32px;
+  font-weight: 700;
+  color: #333;
+  margin-bottom: 12px;
+}
+
+.profile-description {
+  font-size: 16px;
+  color: #666;
+  margin: 0;
+}
+
+/* ===== 탭 메뉴 ===== */
+.tab-menu {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 32px;
+  border-bottom: 2px solid #e0e0e0;
+}
+
+.tab-btn {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 16px 24px;
+  background-color: transparent;
+  border: none;
+  border-bottom: 3px solid transparent;
+  color: #666;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  margin-bottom: -2px;
+}
+
+.tab-btn:hover {
+  color: #667eea;
+  background-color: #f7fafc;
+}
+
+.tab-btn.active {
+  color: #667eea;
+  border-bottom-color: #667eea;
+  background-color: #f7fafc;
+}
+
+.tab-icon {
+  font-size: 20px;
+}
+
+/* ===== 탭 컨텐츠 ===== */
+.tab-content-wrapper {
+  background-color: #ffffff;
+  border-radius: 12px;
+  padding: 40px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+.tab-content {
+  display: none;
+}
+
+.tab-content.active {
+  display: block;
+  animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ===== 폼 스타일 ===== */
+.profile-form {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+}
+
+.form-label {
+  display: block;
+  font-size: 15px;
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 10px;
+}
+
+.form-label .required {
+  color: #e74c3c;
+  margin-left: 4px;
+}
+
+/* 입력 필드 */
+.form-input {
+  width: 100%;
+  padding: 14px 16px;
+  font-size: 15px;
+  color: #333;
+  background-color: #f8f9fa;
+  border: 2px solid #e0e0e0;
+  border-radius: 8px;
+  transition: all 0.2s;
+  font-family: inherit;
+}
+
+.form-input:focus {
+  outline: none;
+  background-color: #ffffff;
+  border-color: #667eea;
+  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+}
+
+.form-input:disabled {
+  background-color: #e9ecef;
+  color: #999;
+  cursor: not-allowed;
+}
+
+.form-input::placeholder {
+  color: #999;
+}
+
+/* 도움말 텍스트 */
+.form-help {
+  margin-top: 6px;
+  font-size: 13px;
+  color: #999;
+}
+
+/* 중복확인 버튼이 있는 입력 필드 */
+.input-with-button {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.input-with-button .form-input {
+  flex: 1;
+}
+
+.btn-check {
+  padding: 14px 20px;
+  background-color: #6c757d;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  white-space: nowrap;
+}
+
+.btn-check:hover {
+  background-color: #5a6268;
+}
+
+.btn-check:disabled {
+  background-color: #adb5bd;
+  cursor: not-allowed;
+}
+
+/* 폼 메시지 (에러, 성공) */
+.form-message {
+  font-size: 13px;
+  margin-top: 6px;
+  min-height: 18px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.form-message.error {
+  color: #e74c3c;
+}
+
+.form-message.success {
+  color: #27ae60;
+}
+
+.form-message.loading {
+  color: #666;
+}
+
+/* 버튼 그룹 */
+.form-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  padding-top: 20px;
+  border-top: 1px solid #e0e0e0;
+  margin-top: 12px;
+}
+
+.btn {
+  padding: 14px 32px;
+  font-size: 15px;
+  font-weight: 600;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  white-space: nowrap;
+}
+
+.btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.btn-cancel {
+  background-color: #f8f9fa;
+  color: #666;
+  border: 2px solid #e0e0e0;
+}
+
+.btn-cancel:hover:not(:disabled) {
+  background-color: #e9ecef;
+  border-color: #ced4da;
+}
+
+.btn-submit {
+  background-color: #667eea;
+  color: #ffffff;
+  box-shadow: 0 2px 4px rgba(102, 126, 234, 0.2);
+}
+
+.btn-submit:hover:not(:disabled) {
+  background-color: #5568d3;
+  box-shadow: 0 4px 8px rgba(102, 126, 234, 0.3);
+  transform: translateY(-1px);
+}
+
+.btn-submit:active:not(:disabled) {
+  transform: translateY(0);
+}
+
+.btn-icon {
+  font-size: 18px;
+}
+
+/* 로딩 상태 */
+.btn.loading {
+  position: relative;
+  color: transparent;
+}
+
+.btn.loading::after {
+  content: '';
+  position: absolute;
+  width: 16px;
+  height: 16px;
+  top: 50%;
+  left: 50%;
+  margin-left: -8px;
+  margin-top: -8px;
+  border: 2px solid #ffffff;
+  border-radius: 50%;
+  border-top-color: transparent;
+  animation: spinner 0.6s linear infinite;
+}
+
+@keyframes spinner {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* 로딩 점 애니메이션 */
+.loading-dots {
+  display: inline-block;
+}
+
+.loading-dots span {
+  animation: blink 1s infinite;
+  font-weight: bold;
+  margin-right: 2px;
+}
+
+.loading-dots span:nth-child(2) {
+  animation-delay: 0.2s;
+}
+
+.loading-dots span:nth-child(3) {
+  animation-delay: 0.4s;
+}
+
+@keyframes blink {
+  0%, 80%, 100% {
+    opacity: 0;
+  }
+  40% {
+    opacity: 1;
+  }
+}
+
+/* ===== Danger Zone (계정 탈퇴) ===== */
+.danger-zone {
+  margin-top: 48px;
+  padding: 24px;
+  border: 2px solid #e74c3c;
+  background-color: #fff5f5;
+  border-radius: 8px;
+}
+
+.danger-zone-header {
+  margin-bottom: 16px;
+}
+
+.danger-zone-title {
+  font-size: 18px;
+  font-weight: 700;
+  color: #e74c3c;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0;
+}
+
+.danger-icon {
+  font-size: 20px;
+}
+
+.danger-zone-body {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.danger-zone-description {
+  font-size: 14px;
+  color: #666;
+  line-height: 1.6;
+  margin: 0;
+}
+
+.danger-zone-description strong {
+  color: #e74c3c;
+  font-weight: 600;
+}
+
+.danger-zone-list {
+  margin: 0;
+  padding-left: 24px;
+  font-size: 14px;
+  color: #666;
+  line-height: 1.8;
+}
+
+.danger-zone-list li {
+  margin-bottom: 4px;
+}
+
+.btn-delete {
+  background-color: #e74c3c;
+  color: white;
+  padding: 12px 24px;
+  font-size: 14px;
+  font-weight: 600;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  align-self: flex-start;
+}
+
+.btn-delete:hover {
+  background-color: #c0392b;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px rgba(231, 76, 60, 0.3);
+}
+
+.btn-delete:active {
+  transform: translateY(0);
+}
+
+.btn-delete .btn-icon {
+  font-size: 16px;
+}
+
+/* 탈퇴 모달 커스텀 스타일 (modal.css가 있다면) */
+.delete-modal-content {
+  padding: 24px;
+}
+
+.delete-modal-warning {
+  background-color: #fff5f5;
+  border: 1px solid #ffebee;
+  border-radius: 6px;
+  padding: 16px;
+  margin-bottom: 20px;
+}
+
+.delete-modal-warning-title {
+  font-size: 16px;
+  font-weight: 600;
+  color: #e74c3c;
+  margin-bottom: 12px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.delete-modal-list {
+  margin: 0;
+  padding-left: 20px;
+  font-size: 14px;
+  color: #666;
+  line-height: 1.8;
+}
+
+.delete-modal-list li {
+  margin-bottom: 4px;
+}
+
+.delete-modal-input-group {
+  margin-top: 20px;
+}
+
+.delete-modal-label {
+  display: block;
+  font-size: 14px;
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 8px;
+}
+
+.delete-modal-input {
+  width: 100%;
+  padding: 12px 14px;
+  font-size: 14px;
+  border: 2px solid #e0e0e0;
+  border-radius: 6px;
+  transition: all 0.2s;
+}
+
+.delete-modal-input:focus {
+  outline: none;
+  border-color: #e74c3c;
+  box-shadow: 0 0 0 3px rgba(231, 76, 60, 0.1);
+}
+
+/* ===== 반응형 ===== */
+@media (max-width: 768px) {
+  .profile-container {
+    padding: 20px 16px;
+  }
+
+  .profile-header h1 {
+    font-size: 24px;
+  }
+
+  .profile-description {
+    font-size: 14px;
+  }
+
+  .tab-content-wrapper {
+    padding: 24px 20px;
+  }
+
+  .tab-btn {
+    font-size: 14px;
+    padding: 12px 16px;
+  }
+
+  .tab-icon {
+    font-size: 18px;
+  }
+
+  .form-actions {
+    flex-direction: column-reverse;
+    gap: 10px;
+  }
+
+  .btn {
+    width: 100%;
+    justify-content: center;
+    padding: 16px;
+  }
+
+  .input-with-button {
+    flex-direction: column;
+  }
+
+  .input-with-button .form-input {
+    width: 100%;
+  }
+
+  .btn-check {
+    width: 100%;
+  }
+}
+
+@media (max-width: 480px) {
+  .profile-container {
+    padding: 16px 12px;
+  }
+
+  .profile-header {
+    margin-bottom: 24px;
+  }
+
+  .tab-content-wrapper {
+    padding: 20px 16px;
+  }
+}
