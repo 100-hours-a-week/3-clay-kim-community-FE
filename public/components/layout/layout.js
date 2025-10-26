@@ -30,7 +30,7 @@ class Layout {
     if (footerPlaceholder) {
       footerPlaceholder.innerHTML = `
         <footer class="footer">
-          <p>© 2025 아무 말 대잔치 | <a href="#">이용약관</a> | <a href="#">개인정보처리방침</a></p>
+          <p>© 2025 아무 말 대잔치 | <a href="http://localhost:8080/tos">이용약관</a> | <a href="#">개인정보처리방침</a></p>
         </footer>
       `;
     }
