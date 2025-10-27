@@ -41,6 +41,7 @@ export async function fetchApi(endpoint, options = {}) {
 
     // API 호출
     const response = await fetch(url, fetchOptions);
+    // console.log('response : ', response);
 
     // 응답 처리
     const contentType = response.headers.get('content-type');
@@ -51,9 +52,12 @@ export async function fetchApi(endpoint, options = {}) {
       data = await response.json();
     }
 
+    console.log("response.status : ", response.status);
+    console.log("auth가 뭐지?", auth);
+
     // 401 Unauthorized - 토큰 만료
     if (response.status === 401 && auth) {
-      handleUnauthorized();
+      await handleUnauthorized();
       return {
         error: {
           status: 401,
@@ -108,15 +112,16 @@ export async function fetchApi(endpoint, options = {}) {
 /**
  * 401 에러 처리 - 로그인 페이지로 리다이렉트
  */
-function handleUnauthorized() {
+async function handleUnauthorized() {
   // 로컬스토리지 클리어
   localStorage.removeItem('accessToken');
   localStorage.removeItem('userEmail');
   localStorage.removeItem('userNickname');
+  localStorage.removeItem('userId');
   
   // 모달이 있으면 알림 표시
   if (window.modal) {
-    window.modal.alert('로그인이 만료되었습니다.<br>다시 로그인해주세요.', '인증 오류')
+    await window.modal.alert('로그인이 만료되었습니다.<br>다시 로그인해주세요.', '인증 오류')
       .then(() => {
         window.location.href = '/pages/login/login.html';
       });

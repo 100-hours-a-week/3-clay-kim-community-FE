@@ -1,10 +1,19 @@
 // 게시글 상세 페이지
 import { get, post, patch } from '/api/fetchApi.js';
 import { API_ENDPOINTS } from '/api/apiList.js';
+import { 
+  renderCommentAccordion, 
+  renderCommentsInGroup,
+  updateCommentCount, 
+  appendComment, 
+  removeComment 
+} from '/components/comment/comment.js';
 
 let postId = null;
 let currentPost = null;
 let isLiked = false;
+let totalComments = 0;  // 전체 댓글 수
+const PAGE_SIZE = 20;   // 페이지당 댓글 수
 
 // 페이지 로드 시 실행
 document.addEventListener('DOMContentLoaded', () => {
@@ -57,6 +66,9 @@ function renderPost(post) {
   document.getElementById('postContent').textContent = post.content;
   document.getElementById('likeCount').textContent = post.likeCount || 0;
 
+  console.log('확인용 : ', localStorage.getItem("userId"));
+  console.log('확인용 : ', localStorage.getItem("accessToken"));
+
   // 작성자인 경우 수정/삭제 버튼 표시
   checkAuthor(post);
 
@@ -91,56 +103,90 @@ function checkLikeStatus() {
   }
 }
 
-// 댓글 목록 가져오기
+// 댓글 목록 가져오기 (초기 로드 - 최신 댓글만)
 async function fetchComments() {
-  // API가 있다면 사용, 없으면 더미 데이터
-  // const { error, result } = await get(API_ENDPOINTS.COMMENTS.LIST(postId));
-  
-  // 임시: 빈 댓글
-  renderComments([]);
-}
-
-// 댓글 렌더링
-function renderComments(comments) {
-  const commentList = document.getElementById('commentList');
-  const commentCount = document.getElementById('commentCount');
-  
-  commentCount.textContent = comments.length;
-
-  if (comments.length === 0) {
-    commentList.innerHTML = `
-      <div class="comment-empty">
-        첫 댓글을 작성해보세요!
-      </div>
-    `;
-    return;
+  try {
+    // 먼저 마지막 페이지의 댓글을 가져오기 위해 전체 댓글 수 조회
+    const { error: countError, result: countResult } = await get(
+      `${API_ENDPOINTS.COMMENTS.LIST(postId)}?page=0&size=1`
+    );
+    
+    if (countError) {
+      console.error('댓글 조회 실패:', countError);
+      renderCommentAccordion(0, [], 'commentList', handleCommentToggle, handleCommentDelete, PAGE_SIZE);
+      updateCommentCount(0);
+      return;
+    }
+    
+    // 전체 댓글 수 저장
+    totalComments = countResult.data.totalElements || 0;
+    
+    if (totalComments === 0) {
+      renderCommentAccordion(0, [], 'commentList', handleCommentToggle, handleCommentDelete, PAGE_SIZE);
+      updateCommentCount(0);
+      return;
+    }
+    
+    // 마지막 페이지 번호 계산
+    const lastPage = Math.max(0, Math.ceil(totalComments / PAGE_SIZE) - 1);
+    
+    // 마지막 페이지의 댓글만 조회 (최신 댓글들)
+    const { error, result } = await get(
+      `${API_ENDPOINTS.COMMENTS.LIST(postId)}?page=${lastPage}&size=${PAGE_SIZE}`
+    );
+    
+    if (error) {
+      console.error('최신 댓글 조회 실패:', error);
+      renderCommentAccordion(totalComments, [], 'commentList', handleCommentToggle, handleCommentDelete, PAGE_SIZE);
+      updateCommentCount(totalComments);
+      return;
+    }
+    
+    const latestComments = result.data.content || [];
+    
+    // 아코디언 렌더링 (전체 댓글 수 + 최신 댓글들)
+    renderCommentAccordion(
+      totalComments, 
+      latestComments, 
+      'commentList', 
+      handleCommentToggle, 
+      handleCommentDelete, 
+      PAGE_SIZE
+    );
+    updateCommentCount(totalComments);
+    
+  } catch (error) {
+    console.error('댓글 조회 중 오류:', error);
+    renderCommentAccordion(0, [], 'commentList', handleCommentToggle, handleCommentDelete, PAGE_SIZE);
+    updateCommentCount(0);
   }
-
-  commentList.innerHTML = comments.map(comment => createCommentHTML(comment)).join('');
-  
-  // 댓글 삭제 버튼 이벤트 등록
-  attachCommentEvents();
 }
 
-// 댓글 HTML 생성
-function createCommentHTML(comment) {
-  const userId = localStorage.getItem('userId');
-  const isAuthor = userId && userId === comment.authorUserId;
-
-  return `
-    <div class="comment-item" data-comment-id="${comment.id}">
-      <div class="comment-header-info">
-        <span class="comment-author">${escapeHtml(comment.nickname || comment.author || '익명')}</span>
-        <span class="comment-date">${formatDate(comment.createdAt)}</span>
-      </div>
-      <div class="comment-content">${escapeHtml(comment.content)}</div>
-      ${isAuthor ? `
-        <div class="comment-actions">
-          <button class="btn-delete" onclick="deleteComment('${comment.id}')">삭제</button>
-        </div>
-      ` : ''}
-    </div>
-  `;
+// 댓글 토글 핸들러 (아코디언 열렸을 때)
+async function handleCommentToggle(page, groupId) {
+  try {
+    const { error, result } = await get(
+      `${API_ENDPOINTS.COMMENTS.LIST(postId)}?page=${page}&size=${PAGE_SIZE}`
+    );
+    
+    if (error) {
+      const group = document.getElementById(groupId);
+      if (group) {
+        group.innerHTML = '<div class="comment-empty-text">댓글을 불러오는데 실패했습니다.</div>';
+      }
+      return;
+    }
+    
+    const comments = result.data.content || [];
+    renderCommentsInGroup(comments, groupId, handleCommentDelete);
+    
+  } catch (error) {
+    console.error('댓글 그룹 로드 실패:', error);
+    const group = document.getElementById(groupId);
+    if (group) {
+      group.innerHTML = '<div class="comment-empty-text">댓글을 불러오는데 실패했습니다.</div>';
+    }
+  }
 }
 
 // 이벤트 리스너 등록
@@ -229,6 +275,8 @@ async function handleDelete() {
     { auth: true, autoRedirect: true }
   );
 
+  console.log("error", error);
+
   if (error) {
     await window.modal.alert('게시글 삭제에 실패했습니다.', '오류');
     return;
@@ -261,21 +309,36 @@ async function handleCommentSubmit() {
     return;
   }
 
-  // TODO: 댓글 작성 API 호출
-  // const { error, result } = await post(
-  //   API_ENDPOINTS.COMMENTS.CREATE(postId),
-  //   { content },
-  //   { auth: true, autoRedirect: true }
-  // );
+  try {
+    // 댓글 작성 API 호출
+    const { error, result } = await post(
+      API_ENDPOINTS.COMMENTS.CREATE(postId),
+      { content },
+      { auth: true },
+    );
 
-  // 임시: 로컬에서만 댓글 추가
-  await window.modal.alert('댓글 기능은 준비 중입니다.', '알림');
-  commentInput.value = '';
-  document.getElementById('commentLength').textContent = '0';
+    if (error) {
+      await window.modal.alert('댓글 작성에 실패했습니다.', '오류');
+      return;
+    }
+
+    // 입력창 초기화
+    commentInput.value = '';
+    document.getElementById('commentLength').textContent = '0';
+    
+    await window.modal.alert('댓글이 작성되었습니다.', '완료');
+    
+    // 댓글 목록 새로고침 (아코디언 다시 렌더링)
+    await fetchComments();
+    
+  } catch (error) {
+    console.error('댓글 작성 실패:', error);
+    await window.modal.alert('댓글 작성에 실패했습니다.', '오류');
+  }
 }
 
 // 댓글 삭제
-window.deleteComment = async function(commentId) {
+async function handleCommentDelete(commentId) {
   const confirmed = await window.modal.confirm(
     '정말로 이 댓글을 삭제하시겠습니까?',
     '댓글 삭제'
@@ -283,25 +346,57 @@ window.deleteComment = async function(commentId) {
 
   if (!confirmed) return;
 
-  // TODO: 댓글 삭제 API 호출
-  // const { error } = await del(
-  //   API_ENDPOINTS.COMMENTS.DELETE(postId, commentId),
-  //   { auth: true, autoRedirect: true }
-  // );
+  try {
+    // 댓글 삭제 API 호출
+    const { error } = await patch(
+      API_ENDPOINTS.COMMENTS.SOFT_DELETE(commentId),
+      {},
+      { auth: true }
+    );
 
-  await window.modal.alert('댓글 기능은 준비 중입니다.', '알림');
-};
-
-// 댓글 이벤트 등록
-function attachCommentEvents() {
-  // 필요시 추가
+    if (error) {
+    // 401은 이미 처리됨
+      // if (error.status !== 401) {
+      //   await window.modal.alert('댓글 삭제에 실패했습니다.', '오류');
+      // }
+      await window.modal.alert('댓글 삭제에 실패했습니다.', '오류');
+      return;
+    }
+    
+    await window.modal.alert('댓글이 삭제되었습니다.', '완료');
+    
+    // 댓글 목록 새로고침
+    await fetchComments();
+    
+  } catch (error) {
+    console.error('댓글 삭제 실패:', error);
+    await window.modal.alert('댓글 삭제에 실패했습니다.', '오류');
+  }
 }
 
-// 날짜 포맷팅
+// 댓글 이벤트 등록 (더 이상 필요 없음 - 컴포넌트에서 처리)
+function attachCommentEvents() {
+  // 컴포넌트에서 처리하므로 비워둠
+}
+
+/**
+ * 시간 포맷팅
+ * @param {string} timestamp - ISO 8601 타임스탬프
+ * @returns {string} 포맷된 시간 문자열
+ */
 function formatDate(timestamp) {
-  if (!timestamp) return '';
+  if (!timestamp) return '방금 전';
   
   const date = new Date(timestamp);
+  const now = new Date();
+  const diff = Math.floor((now - date) / 1000); // 초 단위
+
+  if (diff < 60) return '방금 전';
+  if (diff < 3600) return `${Math.floor(diff / 60)}분 전`;
+  if (diff < 86400) return `${Math.floor(diff / 3600)}시간 전`;
+  if (diff < 604800) return `${Math.floor(diff / 86400)}일 전`;
+  
+  // 일주일 이상 지난 경우 날짜 표시
   return date.toLocaleDateString('ko-KR', {
     year: 'numeric',
     month: 'long',
@@ -309,13 +404,6 @@ function formatDate(timestamp) {
     hour: '2-digit',
     minute: '2-digit'
   });
-}
-
-// HTML 이스케이프
-function escapeHtml(text) {
-  const div = document.createElement('div');
-  div.textContent = text;
-  return div.innerHTML;
 }
 
 // 에러 표시
