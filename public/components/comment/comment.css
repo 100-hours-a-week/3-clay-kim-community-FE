@@ -184,6 +184,7 @@
   gap: 8px;
 }
 
+.btn-comment-edit,
 .btn-comment-delete {
   display: flex;
   align-items: center;
@@ -199,12 +200,19 @@
   font-weight: 500;
 }
 
+.btn-comment-edit:hover {
+  border-color: #007bff;
+  color: #007bff;
+  background-color: #f0f8ff;
+}
+
 .btn-comment-delete:hover {
   border-color: #dc3545;
   color: #dc3545;
   background-color: #fff5f5;
 }
 
+.btn-comment-edit .icon,
 .btn-comment-delete .icon {
   font-size: 14px;
 }
@@ -216,6 +224,76 @@
   color: #333;
   white-space: pre-wrap;
   word-break: break-word;
+}
+
+/* ===== 댓글 수정 폼 ===== */
+.comment-edit-form {
+  margin-top: 12px;
+}
+
+.comment-edit-input {
+  width: 100%;
+  padding: 12px 14px;
+  border: 2px solid #007bff;
+  border-radius: 8px;
+  font-size: 15px;
+  font-family: inherit;
+  resize: vertical;
+  min-height: 80px;
+  box-sizing: border-box;
+  background-color: white;
+  line-height: 1.5;
+  transition: all 0.2s ease;
+}
+
+.comment-edit-input:focus {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.1);
+}
+
+.comment-edit-actions {
+  display: flex;
+  gap: 8px;
+  margin-top: 10px;
+  justify-content: flex-end;
+}
+
+.btn-comment-save,
+.btn-comment-cancel {
+  padding: 8px 16px;
+  font-size: 14px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: all 0.2s ease;
+}
+
+.btn-comment-save {
+  background-color: #007bff;
+  color: white;
+}
+
+.btn-comment-save:hover {
+  background-color: #0056b3;
+  transform: translateY(-1px);
+  box-shadow: 0 2px 6px rgba(0, 123, 255, 0.3);
+}
+
+.btn-comment-cancel {
+  background-color: #6c757d;
+  color: white;
+}
+
+.btn-comment-cancel:hover {
+  background-color: #5a6268;
+  transform: translateY(-1px);
+  box-shadow: 0 2px 6px rgba(108, 117, 125, 0.3);
+}
+
+.btn-comment-save:active,
+.btn-comment-cancel:active {
+  transform: translateY(0);
 }
 
 /* ===== 빈 상태 ===== */
@@ -383,8 +461,20 @@
     font-size: 14px;
   }
 
+  .btn-comment-edit,
   .btn-comment-delete {
     padding: 5px 10px;
     font-size: 12px;
+  }
+
+  .comment-edit-input {
+    font-size: 14px;
+    min-height: 70px;
+  }
+
+  .btn-comment-save,
+  .btn-comment-cancel {
+    padding: 7px 14px;
+    font-size: 13px;
   }
 }

@@ -7,9 +7,10 @@
  * @param {string} containerId - 렌더링할 컨테이너 ID
  * @param {Function} onToggle - 토글 클릭 콜백 (pageNumber)
  * @param {Function} onDelete - 삭제 버튼 클릭 콜백
+ * @param {Function} onEdit - 수정 버튼 클릭 콜백
  * @param {number} pageSize - 페이지당 댓글 수 (기본 20)
  */
-export function renderCommentAccordion(totalComments, latestComments, containerId, onToggle, onDelete, pageSize = 20) {
+export function renderCommentAccordion(totalComments, latestComments, containerId, onToggle, onDelete, onEdit, pageSize = 20) {
   const container = document.getElementById(containerId);
   
   if (!container) {
@@ -73,12 +74,15 @@ export function renderCommentAccordion(totalComments, latestComments, containerI
   
   // 토글 버튼 이벤트 등록
   attachAccordionEvents(container, onToggle);
-  
-  // 삭제 버튼 이벤트 등록 (마지막 그룹에만)
-  if (onDelete) {
-    const lastGroup = container.querySelector(`#comment-group-${lastPage}`);
-    if (lastGroup) {
+
+  // 삭제/수정 버튼 이벤트 등록 (마지막 그룹에만)
+  const lastGroup = container.querySelector(`#comment-group-${lastPage}`);
+  if (lastGroup) {
+    if (onDelete) {
       attachDeleteEvents(lastGroup, onDelete);
+    }
+    if (onEdit) {
+      attachEditEvents(lastGroup, onEdit);
     }
   }
 }
@@ -88,8 +92,9 @@ export function renderCommentAccordion(totalComments, latestComments, containerI
  * @param {Array} comments - 댓글 배열
  * @param {string} containerId - 렌더링할 컨테이너 ID
  * @param {Function} onDelete - 삭제 버튼 클릭 콜백
+ * @param {Function} onEdit - 수정 버튼 클릭 콜백
  */
-export function renderComments(comments, containerId, onDelete) {
+export function renderComments(comments, containerId, onDelete, onEdit) {
   const container = document.getElementById(containerId);
   
   if (!container) {
@@ -110,10 +115,13 @@ export function renderComments(comments, containerId, onDelete) {
 
   // 댓글 목록 렌더링
   container.innerHTML = comments.map(comment => createCommentHTML(comment)).join('');
-  
-  // 삭제 버튼 이벤트 등록
+
+  // 삭제/수정 버튼 이벤트 등록
   if (onDelete) {
     attachDeleteEvents(container, onDelete);
+  }
+  if (onEdit) {
+    attachEditEvents(container, onEdit);
   }
 }
 
@@ -137,6 +145,10 @@ export function createCommentHTML(comment) {
           <span class="comment-date">${formatTime(comment.createdAt)}</span>
           ${isAuthor ? `
             <div class="comment-actions">
+              <button class="btn-comment-edit" data-comment-id="${comment.id}">
+                <span class="icon">✏️</span>
+                수정
+              </button>
               <button class="btn-comment-delete" data-comment-id="${comment.id}">
                 <span class="icon">🗑️</span>
                 삭제
@@ -145,7 +157,14 @@ export function createCommentHTML(comment) {
           ` : ''}
         </div>
       </div>
-      <div class="comment-content">${escapeHtml(comment.content)}</div>
+      <div class="comment-content" data-original-content="${escapeHtml(comment.content)}">${escapeHtml(comment.content)}</div>
+      <div class="comment-edit-form" style="display: none;">
+        <textarea class="comment-edit-input" maxlength="500">${escapeHtml(comment.content)}</textarea>
+        <div class="comment-edit-actions">
+          <button class="btn-comment-save" data-comment-id="${comment.id}">저장</button>
+          <button class="btn-comment-cancel" data-comment-id="${comment.id}">취소</button>
+        </div>
+      </div>
     </div>
   `;
 }
@@ -207,22 +226,26 @@ function attachAccordionEvents(container, onToggle) {
  * @param {Array} comments - 댓글 배열
  * @param {string} groupId - 그룹 컨테이너 ID
  * @param {Function} onDelete - 삭제 콜백
+ * @param {Function} onEdit - 수정 콜백
  */
-export function renderCommentsInGroup(comments, groupId, onDelete) {
+export function renderCommentsInGroup(comments, groupId, onDelete, onEdit) {
   const group = document.getElementById(groupId);
-  
+
   if (!group) return;
-  
+
   if (!comments || comments.length === 0) {
     group.innerHTML = '<div class="comment-empty-text">댓글이 없습니다.</div>';
     return;
   }
-  
+
   group.innerHTML = comments.map(comment => createCommentHTML(comment)).join('');
-  
-  // 삭제 버튼 이벤트 등록
+
+  // 삭제/수정 버튼 이벤트 등록
   if (onDelete) {
     attachDeleteEvents(group, onDelete);
+  }
+  if (onEdit) {
+    attachEditEvents(group, onEdit);
   }
 }
 
@@ -233,7 +256,7 @@ export function renderCommentsInGroup(comments, groupId, onDelete) {
  */
 function attachDeleteEvents(container, onDelete) {
   const deleteButtons = container.querySelectorAll('.btn-comment-delete');
-  
+
   deleteButtons.forEach(button => {
     button.addEventListener('click', (e) => {
       e.stopPropagation();
@@ -243,6 +266,128 @@ function attachDeleteEvents(container, onDelete) {
       }
     });
   });
+}
+
+/**
+ * 수정 버튼 이벤트 등록
+ * @param {HTMLElement} container - 댓글 컨테이너
+ * @param {Function} onEdit - 수정 콜백 함수
+ */
+function attachEditEvents(container, onEdit) {
+  const editButtons = container.querySelectorAll('.btn-comment-edit');
+
+  editButtons.forEach(button => {
+    button.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const commentId = button.dataset.commentId;
+      const commentItem = button.closest('.comment-item');
+
+      if (commentItem) {
+        enterEditMode(commentItem);
+      }
+    });
+  });
+
+  // 저장 버튼 이벤트
+  const saveButtons = container.querySelectorAll('.btn-comment-save');
+  saveButtons.forEach(button => {
+    button.addEventListener('click', async (e) => {
+      e.stopPropagation();
+      const commentId = button.dataset.commentId;
+      const commentItem = button.closest('.comment-item');
+      const textarea = commentItem.querySelector('.comment-edit-input');
+      const newContent = textarea.value.trim();
+
+      if (!newContent) {
+        await window.modal.alert('댓글 내용을 입력해주세요.', '알림');
+        return;
+      }
+
+      if (onEdit && commentId) {
+        await onEdit(commentId, newContent, commentItem);
+      }
+    });
+  });
+
+  // 취소 버튼 이벤트
+  const cancelButtons = container.querySelectorAll('.btn-comment-cancel');
+  cancelButtons.forEach(button => {
+    button.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const commentItem = button.closest('.comment-item');
+      if (commentItem) {
+        exitEditMode(commentItem);
+      }
+    });
+  });
+}
+
+/**
+ * 댓글 수정 모드로 전환
+ * @param {HTMLElement} commentItem - 댓글 요소
+ */
+function enterEditMode(commentItem) {
+  const contentDiv = commentItem.querySelector('.comment-content');
+  const editForm = commentItem.querySelector('.comment-edit-form');
+  const actions = commentItem.querySelector('.comment-actions');
+
+  if (contentDiv && editForm && actions) {
+    contentDiv.style.display = 'none';
+    editForm.style.display = 'block';
+    actions.style.display = 'none';
+
+    // textarea에 포커스
+    const textarea = editForm.querySelector('.comment-edit-input');
+    if (textarea) {
+      textarea.focus();
+      textarea.setSelectionRange(textarea.value.length, textarea.value.length);
+    }
+  }
+}
+
+/**
+ * 댓글 수정 모드 종료
+ * @param {HTMLElement} commentItem - 댓글 요소
+ */
+function exitEditMode(commentItem) {
+  const contentDiv = commentItem.querySelector('.comment-content');
+  const editForm = commentItem.querySelector('.comment-edit-form');
+  const actions = commentItem.querySelector('.comment-actions');
+  const textarea = commentItem.querySelector('.comment-edit-input');
+  const originalContent = contentDiv.dataset.originalContent;
+
+  if (contentDiv && editForm && actions) {
+    contentDiv.style.display = 'block';
+    editForm.style.display = 'none';
+    actions.style.display = 'flex';
+
+    // 원본 내용으로 복원
+    if (textarea && originalContent) {
+      textarea.value = originalContent;
+    }
+  }
+}
+
+/**
+ * 댓글 내용 업데이트 (수정 후)
+ * @param {string} commentId - 댓글 ID
+ * @param {string} newContent - 새로운 내용
+ */
+export function updateCommentContent(commentId, newContent) {
+  const commentItem = document.querySelector(`[data-comment-id="${commentId}"]`);
+  if (!commentItem) return;
+
+  const contentDiv = commentItem.querySelector('.comment-content');
+  const textarea = commentItem.querySelector('.comment-edit-input');
+
+  if (contentDiv && textarea) {
+    const escapedContent = escapeHtml(newContent);
+    contentDiv.textContent = newContent;
+    contentDiv.dataset.originalContent = escapedContent;
+    textarea.value = newContent;
+
+    exitEditMode(commentItem);
+  }
 }
 
 /**

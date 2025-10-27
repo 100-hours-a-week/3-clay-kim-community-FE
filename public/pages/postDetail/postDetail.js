@@ -1,12 +1,13 @@
 // 게시글 상세 페이지
 import { get, post, patch } from '/api/fetchApi.js';
 import { API_ENDPOINTS } from '/api/apiList.js';
-import { 
-  renderCommentAccordion, 
+import {
+  renderCommentAccordion,
   renderCommentsInGroup,
-  updateCommentCount, 
-  appendComment, 
-  removeComment 
+  updateCommentCount,
+  appendComment,
+  removeComment,
+  updateCommentContent
 } from '/components/comment/comment.js';
 
 let postId = null;
@@ -146,18 +147,19 @@ async function fetchComments() {
     
     // 아코디언 렌더링 (전체 댓글 수 + 최신 댓글들)
     renderCommentAccordion(
-      totalComments, 
-      latestComments, 
-      'commentList', 
-      handleCommentToggle, 
-      handleCommentDelete, 
+      totalComments,
+      latestComments,
+      'commentList',
+      handleCommentToggle,
+      handleCommentDelete,
+      handleCommentEdit,
       PAGE_SIZE
     );
     updateCommentCount(totalComments);
     
   } catch (error) {
     console.error('댓글 조회 중 오류:', error);
-    renderCommentAccordion(0, [], 'commentList', handleCommentToggle, handleCommentDelete, PAGE_SIZE);
+    renderCommentAccordion(0, [], 'commentList', handleCommentToggle, handleCommentDelete, handleCommentEdit, PAGE_SIZE);
     updateCommentCount(0);
   }
 }
@@ -176,16 +178,41 @@ async function handleCommentToggle(page, groupId) {
       }
       return;
     }
-    
+
     const comments = result.data.content || [];
-    renderCommentsInGroup(comments, groupId, handleCommentDelete);
-    
+    renderCommentsInGroup(comments, groupId, handleCommentDelete, handleCommentEdit);
+
   } catch (error) {
     console.error('댓글 그룹 로드 실패:', error);
     const group = document.getElementById(groupId);
     if (group) {
       group.innerHTML = '<div class="comment-empty-text">댓글을 불러오는데 실패했습니다.</div>';
     }
+  }
+}
+
+// 댓글 수정
+async function handleCommentEdit(commentId, newContent, commentItem) {
+  try {
+    // 댓글 수정 API 호출
+    const { error } = await patch(
+      API_ENDPOINTS.COMMENTS.UPDATE(commentId),
+      { content: newContent },
+      { auth: true }
+    );
+
+    if (error) {
+      await window.modal.alert('댓글 수정에 실패했습니다.', '오류');
+      return;
+    }
+
+    // UI 업데이트
+    updateCommentContent(commentId, newContent);
+    await window.modal.alert('댓글이 수정되었습니다.', '완료');
+
+  } catch (error) {
+    console.error('댓글 수정 실패:', error);
+    await window.modal.alert('댓글 수정에 실패했습니다.', '오류');
   }
 }
 
