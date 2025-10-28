@@ -33,6 +33,13 @@ document.addEventListener("DOMContentLoaded", () => {
           <div id="pwDuplicateError" class="error"></div>
         </div>
 
+        <div class="form-group">
+          <label for="profileImage">프로필 이미지</label>
+          <input type="file" id="profileImage" name="profileImage" accept="image/*">
+          <div id="imagePreview" class="image-preview"></div>
+          <small class="image-info">* 이미지를 넣지 않으면 기본 이미지로 등록됩니다.</small>
+        </div>
+
         <button type="submit" class="btn submit">회원가입</button>
       </form>
 
@@ -53,6 +60,8 @@ document.addEventListener("DOMContentLoaded", () => {
     const nicknameInput = document.getElementById("nickname");
     const pw = document.getElementById("password");
     const pwConfirm = document.getElementById("confirmPassword");
+    const profileImageInput = document.getElementById("profileImage");
+    const imagePreview = document.getElementById("imagePreview");
 
     const emailError = document.getElementById("emailError");
     const nicknameError = document.getElementById("nicknameError");
@@ -62,6 +71,8 @@ document.addEventListener("DOMContentLoaded", () => {
     const role = 'role';
 
     const emailRegex = /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,})+$/; // 이메일 정규식
+
+    let selectedImageFile = null;
 
     // ✅ 디바운스 유틸
     function debounce(fn, delay) {
@@ -147,6 +158,22 @@ document.addEventListener("DOMContentLoaded", () => {
     emailInput.addEventListener("input", (e) => checkEmail(e.target.value.trim()));
     nicknameInput.addEventListener("input", (e) => checkNickname(e.target.value.trim()));
 
+    // ✅ 이미지 미리보기
+    profileImageInput.addEventListener("change", (e) => {
+      const file = e.target.files[0];
+      if (file) {
+        selectedImageFile = file;
+        const reader = new FileReader();
+        reader.onload = (event) => {
+          imagePreview.innerHTML = `<img src="${event.target.result}" alt="프로필 미리보기" style="max-width: 150px; max-height: 150px; border-radius: 8px; margin-top: 10px;">`;
+        };
+        reader.readAsDataURL(file);
+      } else {
+        selectedImageFile = null;
+        imagePreview.innerHTML = "";
+      }
+    });
+
     // 비밀번호 실시간 검증
     function validatePassword() {
       if (!pw.value) {
@@ -196,20 +223,24 @@ document.addEventListener("DOMContentLoaded", () => {
         return;
       }
 
-      const payload = {
-        email: emailInput.value.trim(),
-        nickname: nicknameInput.value.trim(),
-        password: pw.value.trim(),
-        role: 'user'
-      };
-
       showLoading(formMessage);
 
       try {
+        // FormData를 사용하여 이미지와 함께 전송
+        const formData = new FormData();
+        formData.append("email", emailInput.value.trim());
+        formData.append("nickname", nicknameInput.value.trim());
+        formData.append("password", pw.value.trim());
+        formData.append("role", "user");
+
+        // 이미지가 선택된 경우에만 추가
+        if (selectedImageFile) {
+          formData.append("profileImage", selectedImageFile);
+        }
+
         const response = await fetch("http://localhost:8080/users", {
           method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(payload),
+          body: formData,
         });
 
         if (!response.ok) {
