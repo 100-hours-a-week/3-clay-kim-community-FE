@@ -162,6 +162,63 @@
   color: #999;
 }
 
+/* ===== 프로필 이미지 섹션 ===== */
+.profile-image-section {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  padding: 20px;
+  background-color: #f8f9fa;
+  border-radius: 12px;
+}
+
+.profile-image-preview {
+  flex-shrink: 0;
+}
+
+.profile-image {
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 4px solid #ffffff;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.profile-image-controls {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  flex: 1;
+}
+
+.btn-image-change {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 12px 24px;
+  background-color: #667eea;
+  color: #ffffff;
+  font-size: 14px;
+  font-weight: 600;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s;
+  align-self: flex-start;
+  box-shadow: 0 2px 4px rgba(102, 126, 234, 0.2);
+}
+
+.btn-image-change:hover {
+  background-color: #5568d3;
+  box-shadow: 0 4px 8px rgba(102, 126, 234, 0.3);
+  transform: translateY(-1px);
+}
+
+.btn-image-change:active {
+  transform: translateY(0);
+}
+
 /* 중복확인 버튼이 있는 입력 필드 */
 .input-with-button {
   display: flex;
@@ -528,6 +585,20 @@
   }
 
   .btn-check {
+    width: 100%;
+  }
+
+  .profile-image-section {
+    flex-direction: column;
+    text-align: center;
+    gap: 16px;
+  }
+
+  .profile-image-controls {
+    align-items: center;
+  }
+
+  .btn-image-change {
     width: 100%;
   }
 }

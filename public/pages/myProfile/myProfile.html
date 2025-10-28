@@ -37,11 +37,32 @@
                 <div class="tab-content active" id="info-tab">
                     <form class="profile-form" id="profileForm">
                         <div class="form-group">
+                            <label class="form-label">프로필 이미지</label>
+                            <div class="profile-image-section">
+                                <div class="profile-image-preview">
+                                    <img id="currentProfileImage" src="" alt="프로필 이미지" class="profile-image">
+                                </div>
+                                <div class="profile-image-controls">
+                                    <label for="profileImageInput" class="btn btn-image-change">
+                                        📷 이미지 변경
+                                    </label>
+                                    <input
+                                        type="file"
+                                        id="profileImageInput"
+                                        accept="image/*"
+                                        style="display: none;"
+                                    />
+                                    <small class="form-help">JPG, PNG 파일 (최대 5MB)</small>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
                             <label for="email" class="form-label">이메일</label>
-                            <input 
-                                type="email" 
-                                id="email" 
-                                class="form-input" 
+                            <input
+                                type="email"
+                                id="email"
+                                class="form-input"
                                 disabled
                                 placeholder="이메일"
                             />
@@ -52,10 +73,10 @@
                             <label for="nickname" class="form-label">
                                 닉네임 <span class="required">*</span>
                             </label>
-                            <input 
-                                type="text" 
-                                id="nickname" 
-                                class="form-input" 
+                            <input
+                                type="text"
+                                id="nickname"
+                                class="form-input"
                                 placeholder="닉네임 (2~10자)"
                                 maxlength="10"
                                 required

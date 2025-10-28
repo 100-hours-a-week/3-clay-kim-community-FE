@@ -5,6 +5,8 @@ import { API_ENDPOINTS } from '/api/apiList.js';
 
 let originalNickname = ''; // 원래 닉네임 저장
 let isNicknameValid = false; // 닉네임 유효성 여부
+let selectedImageFile = null; // 선택된 새 이미지 파일
+let originalProfileImage = ''; // 원래 프로필 이미지 URL
 
 // 페이지 로드 시 실행
 document.addEventListener('DOMContentLoaded', () => {
@@ -49,11 +51,28 @@ function initTabs() {
 async function loadUserInfo() {
   const email = localStorage.getItem('userEmail');
   const nickname = localStorage.getItem('userNickname');
+  const userId = localStorage.getItem('userId');
 
   // 화면에 표시
   document.getElementById('email').value = email || '';
   document.getElementById('nickname').value = nickname || '';
   originalNickname = nickname || '';
+
+  // 프로필 이미지 불러오기
+  try {
+    const { error, result } = await get(API_ENDPOINTS.USERS.GET_USER(userId));
+
+    if (!error && result?.data?.profileImage) {
+      originalProfileImage = result.data.profileImage;
+      document.getElementById('currentProfileImage').src = result.data.profileImage;
+    } else {
+      // 기본 이미지 설정
+      document.getElementById('currentProfileImage').src = '/images/default-profile.png';
+    }
+  } catch (err) {
+    console.error('프로필 이미지 로드 에러:', err);
+    document.getElementById('currentProfileImage').src = '/images/default-profile.png';
+  }
 }
 
 // ===== 기본 정보 수정 폼 =====
@@ -61,16 +80,47 @@ function initProfileForm() {
   const form = document.getElementById('profileForm');
   const nicknameInput = document.getElementById('nickname');
   const btnCancel = document.getElementById('btnCancel');
+  const profileImageInput = document.getElementById('profileImageInput');
 
   // 닉네임 실시간 검증 (debounce)
   nicknameInput.addEventListener('input', (e) => {
     checkNicknameDebounced(e.target.value.trim());
   });
 
+  // 이미지 변경 처리
+  profileImageInput.addEventListener('change', (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      // 파일 크기 체크 (5MB)
+      if (file.size > 5 * 1024 * 1024) {
+        window.modal.alert('이미지 파일은 5MB 이하만 업로드 가능합니다.', '알림');
+        e.target.value = '';
+        return;
+      }
+
+      // 이미지 파일 타입 체크
+      if (!file.type.startsWith('image/')) {
+        window.modal.alert('이미지 파일만 업로드 가능합니다.', '알림');
+        e.target.value = '';
+        return;
+      }
+
+      selectedImageFile = file;
+
+      // 미리보기 표시
+      const reader = new FileReader();
+      reader.onload = (event) => {
+        document.getElementById('currentProfileImage').src = event.target.result;
+      };
+      reader.readAsDataURL(file);
+    }
+  });
+
   // 취소 버튼
   btnCancel.addEventListener('click', async () => {
     if (await window.modal.confirm('수정을 취소하시겠습니까?')) {
       loadUserInfo(); // 원래 정보로 복원
+      selectedImageFile = null;
       isNicknameValid = false;
       document.getElementById('nicknameError').textContent = '';
       window.location.href = '/pages/post/post.html';
@@ -157,14 +207,17 @@ async function handleProfileSubmit(e) {
   const nickname = document.getElementById('nickname').value.trim();
   const btnSubmit = document.getElementById('btnSubmit');
 
-  // 닉네임이 변경되었는지 확인
-  if (nickname === originalNickname) {
+  // 닉네임이나 이미지가 변경되었는지 확인
+  const nicknameChanged = nickname !== originalNickname;
+  const imageChanged = selectedImageFile !== null;
+
+  if (!nicknameChanged && !imageChanged) {
     await window.modal.alert('변경된 정보가 없습니다.', '알림');
     return;
   }
 
-  // 유효성 확인
-  if (!isNicknameValid) {
+  // 닉네임이 변경된 경우 유효성 확인
+  if (nicknameChanged && !isNicknameValid) {
     await window.modal.alert('사용 가능한 닉네임인지 확인해주세요.', '알림');
     return;
   }
@@ -174,30 +227,54 @@ async function handleProfileSubmit(e) {
   btnSubmit.classList.add('loading');
 
   try {
-    const { error, result } = await fetchApi(API_ENDPOINTS.USERS.UPDATE_USER(localStorage.getItem('userId')), {
-      method: 'PATCH',
-      body: { nickname },
-      auth: true
-    });
+    // FormData 사용 (이미지 포함 가능)
+    const formData = new FormData();
 
-    if (error) {
-      await window.modal.alert(error.message || '닉네임 수정에 실패했습니다.', '오류');
-      return;
+    if (nicknameChanged) {
+      formData.append('nickname', nickname);
     }
 
-    // 로컬스토리지 업데이트
-    localStorage.setItem('userNickname', nickname);
-    originalNickname = nickname;
-    isNicknameValid = false;
+    if (imageChanged) {
+      formData.append('profileImage', selectedImageFile);
+    }
 
-    await window.modal.alert('닉네임이 성공적으로 변경되었습니다!', '완료');
-    
+    // fetchApi를 사용하여 FormData 전송
+    const response = await fetch(`http://localhost:8080/users/${localStorage.getItem('userId')}`, {
+      method: 'PATCH',
+      headers: {
+        'Authorization': `Bearer ${localStorage.getItem('accessToken')}`
+      },
+      body: formData
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json();
+      throw new Error(errorData.message || '프로필 수정에 실패했습니다.');
+    }
+
+    const result = await response.json();
+
+    // 로컬스토리지 업데이트
+    if (nicknameChanged) {
+      localStorage.setItem('userNickname', nickname);
+      originalNickname = nickname;
+    }
+
+    if (imageChanged && result.data?.profileImage) {
+      originalProfileImage = result.data.profileImage;
+    }
+
+    isNicknameValid = false;
+    selectedImageFile = null;
+
+    await window.modal.alert('프로필이 성공적으로 변경되었습니다!', '완료');
+
     // 헤더 업데이트를 위해 페이지 새로고침
     window.location.reload();
 
   } catch (error) {
-    console.error('닉네임 수정 에러:', error);
-    await window.modal.alert('닉네임 수정에 실패했습니다.', '오류');
+    console.error('프로필 수정 에러:', error);
+    await window.modal.alert(error.message || '프로필 수정에 실패했습니다.', '오류');
   } finally {
     btnSubmit.disabled = false;
     btnSubmit.classList.remove('loading');
