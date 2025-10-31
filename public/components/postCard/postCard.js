@@ -30,7 +30,7 @@ function createPostCard(post) {
   `;
 }
 
-// ✅ 게시글 카드 리스트 렌더링 (append 모드 추가!)
+// 게시글 카드 리스트 렌더링 (append 모드 추가!)
 function renderPostCards(posts, containerId, append = false, onClickCallback) {
   const container = document.getElementById(containerId);
   
@@ -49,7 +49,7 @@ function renderPostCards(posts, containerId, append = false, onClickCallback) {
   }
 
   if (append) {
-    // ✅ 추가 모드: 기존 목록에 이어붙이기
+    // 추가 모드: 기존 목록에 이어붙이기
     posts.forEach(post => {
       const tempDiv = document.createElement('div');
       tempDiv.innerHTML = createPostCard(post).trim();
@@ -68,7 +68,7 @@ function renderPostCards(posts, containerId, append = false, onClickCallback) {
       container.appendChild(postElement);
     });
   } else {
-    // ✅ 교체 모드: 전체 새로 그리기
+    // 교체 모드: 전체 새로 그리기
     container.innerHTML = posts.map(post => createPostCard(post)).join('');
     
     // 클릭 이벤트 등록

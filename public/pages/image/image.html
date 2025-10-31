@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>이미지 업로드 테스트</title>
+  <link rel="stylesheet" href="image.css">
+</head>
+<body>
+  <div class="container">
+    <h1>이미지 업로드 테스트</h1>
+
+    <div class="upload-section">
+      <h2>단일 이미지 업로드</h2>
+      <input type="file" id="singleImage" accept="image/*">
+      <button id="btnSingleUpload">단일 업로드</button>
+      <div id="singlePreview" class="preview"></div>
+    </div>
+
+    <div class="upload-section">
+      <h2>다중 이미지 업로드</h2>
+      <input type="file" id="multipleImages" accept="image/*" multiple>
+      <button id="btnMultipleUpload">다중 업로드</button>
+      <div id="multiplePreview" class="preview"></div>
+    </div>
+
+    <div class="response-section">
+      <h2>서버 응답</h2>
+      <pre id="response"></pre>
+    </div>
+  </div>
+
+  <script type="module" src="image.js"></script>
+</body>
+</html>

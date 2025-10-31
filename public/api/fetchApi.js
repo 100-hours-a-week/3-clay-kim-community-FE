@@ -32,6 +32,7 @@ export async function fetchApi(endpoint, options = {}) {
     const fetchOptions = {
       method,
       headers: requestHeaders,
+      credentials: 'include',
     };
 
     // body가 있으면 추가 (GET 요청에는 body 없음)

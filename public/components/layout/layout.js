@@ -1,5 +1,3 @@
-// layout.js
-
 class Layout {
   constructor() {
     this.injectLayout();
@@ -68,7 +66,6 @@ class Layout {
   initHeader() {
     this.userEmail = localStorage.getItem("userEmail");
     this.userNickname = localStorage.getItem("userNickname");
-    this.accessToken = localStorage.getItem("accessToken");
     this.renderHeader();
     this.attachEventListeners();
   }
@@ -77,7 +74,7 @@ class Layout {
    * 로그인 여부 확인
    */
   isLoggedIn() {
-    return !!this.accessToken;
+    return !!this.userEmail;
   }
 
   /**
@@ -145,10 +142,9 @@ class Layout {
    */
   handleLogout() {
     // if (confirm("로그아웃 하시겠습니까?")) {
-      localStorage.removeItem("accessToken");
-      localStorage.removeItem("refreshToken");
       localStorage.removeItem("userEmail");
       localStorage.removeItem("userNickname");
+      localStorage.removeItem("userId");
       // alert("로그아웃되었습니다.");
       window.location.href = "/";
     // }

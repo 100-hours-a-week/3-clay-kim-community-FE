@@ -56,11 +56,9 @@ document.addEventListener("DOMContentLoaded", () => {
       // 응답 본문에서 데이터 추출
       console.log("로그인 응답:", result);
 
-      const accessToken = result.data.accessToken;
 
       // localStorage에 토큰과 이메일 저장
-      if (accessToken) {
-        localStorage.setItem("accessToken", accessToken);
+      if (result) {
         localStorage.setItem("userEmail", email);
         localStorage.setItem("userNickname", result.data.nickname);
         localStorage.setItem("userId", result.data.userId);

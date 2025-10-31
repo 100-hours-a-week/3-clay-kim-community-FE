@@ -27,11 +27,16 @@ document.addEventListener('DOMContentLoaded', () => {
     return;
   }
 
+  // 게시글 초기화
   initPostDetail();
   attachEventListeners();
 });
 
-// 게시글 상세 초기화
+/**
+ * 게시글 내용불러오기
+ * 댓글 불러오기
+ * + 조회수 불러오기
+ */
 async function initPostDetail() {
   try {
     await fetchPostDetail();
@@ -42,7 +47,9 @@ async function initPostDetail() {
   }
 }
 
-// 게시글 상세 정보 가져오기
+/**
+ * 게시글 상세 정보 가져오기
+ */ 
 async function fetchPostDetail() {
   const { error, result } = await get(API_ENDPOINTS.POSTS.DETAIL(postId));
 
@@ -63,18 +70,15 @@ function renderPost(post) {
   document.getElementById('postTitle').textContent = post.title;
   document.getElementById('postAuthor').textContent = post.nickname || post.author || '익명';
   document.getElementById('postDate').textContent = formatDate(post.createdAt);
-  document.getElementById('postViews').textContent = post.viewCount || 0;
   document.getElementById('postContent').textContent = post.content;
+  document.getElementById('postViews').textContent = post.viewCount || 0;
   document.getElementById('likeCount').textContent = post.likeCount || 0;
 
-  console.log('확인용 : ', localStorage.getItem("userId"));
-  console.log('확인용 : ', localStorage.getItem("accessToken"));
+  console.log('확인용 : ', localStorage.getItem("userEmail"));
+  console.log('확인용 : ', postAuthor)
 
   // 작성자인 경우 수정/삭제 버튼 표시
   checkAuthor(post);
-
-  // 좋아요 상태 확인 (로컬스토리지 이용)
-  checkLikeStatus();
 }
 
 // 작성자 확인
@@ -82,25 +86,12 @@ function checkAuthor(post) {
   const userId = localStorage.getItem('userId');
   console.log('userId입니다:', userId);
   const isAuthor = userId === post.userId;
-  console.log('결과입니다,:', userId && userId === post.userId);
-  console.log('결과입니다,:', userId === post.userId);
+  console.log('결과입니다,:', isAuthor && userId === post.userId);
+  console.log('결과입니다,:', isAuthor === post.userId);
 
   if (isAuthor) {
     document.getElementById('btnEdit').style.display = 'inline-block';
     document.getElementById('btnDelete').style.display = 'inline-block';
-  }
-}
-
-// 좋아요 상태 확인
-function checkLikeStatus() {
-  const likedPosts = JSON.parse(localStorage.getItem('likedPosts') || '[]');
-  isLiked = likedPosts.includes(postId);
-  
-  const btnLike = document.getElementById('btnLike');
-  if (isLiked) {
-    btnLike.classList.add('liked');
-  } else {
-    btnLike.classList.remove('liked');
   }
 }
 
@@ -244,9 +235,9 @@ function attachEventListeners() {
 
 // 좋아요 처리
 async function handleLike() {
-  const accessToken = localStorage.getItem('accessToken');
+  const userEmail = localStorage.getItem('userEmail');
   
-  if (!accessToken) {
+  if (!userEmail) {
     const alerted = await window.modal.alert(
       '로그인이 필요한 서비스입니다.',
       '알림'
@@ -257,25 +248,7 @@ async function handleLike() {
     return;
   }
 
-  // 좋아요 토글 (로컬에서만)
-  const likedPosts = JSON.parse(localStorage.getItem('likedPosts') || '[]');
-  
-  if (isLiked) {
-    // 좋아요 취소
-    const index = likedPosts.indexOf(postId);
-    if (index > -1) likedPosts.splice(index, 1);
-    currentPost.likeCount = Math.max(0, (currentPost.likeCount || 0) - 1);
-  } else {
-    // 좋아요
-    likedPosts.push(postId);
-    currentPost.likeCount = (currentPost.likeCount || 0) + 1;
-  }
-  
-  localStorage.setItem('likedPosts', JSON.stringify(likedPosts));
-  isLiked = !isLiked;
-  
   // UI 업데이트
-  checkLikeStatus();
   document.getElementById('likeCount').textContent = currentPost.likeCount;
 
   // TODO: 서버에 좋아요 API 호출
@@ -382,10 +355,6 @@ async function handleCommentDelete(commentId) {
     );
 
     if (error) {
-    // 401은 이미 처리됨
-      // if (error.status !== 401) {
-      //   await window.modal.alert('댓글 삭제에 실패했습니다.', '오류');
-      // }
       await window.modal.alert('댓글 삭제에 실패했습니다.', '오류');
       return;
     }
@@ -408,8 +377,6 @@ function attachCommentEvents() {
 
 /**
  * 시간 포맷팅
- * @param {string} timestamp - ISO 8601 타임스탬프
- * @returns {string} 포맷된 시간 문자열
  */
 function formatDate(timestamp) {
   if (!timestamp) return '방금 전';

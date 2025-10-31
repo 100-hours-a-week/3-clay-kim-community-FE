@@ -9,13 +9,6 @@ export const API_CONFIG = {
       'Content-Type': 'application/json',
     };
     
-    if (includeAuth) {
-      const accessToken = localStorage.getItem('accessToken');
-      if (accessToken) {
-        headers['access'] = accessToken;
-      }
-    }
-    
     return headers;
   }
 };

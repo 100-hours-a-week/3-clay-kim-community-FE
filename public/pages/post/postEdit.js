@@ -28,8 +28,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
 // 로그인 상태 체크
 function checkLoginStatus() {
-  const accessToken = localStorage.getItem('accessToken');
-  if (!accessToken) {
+  const userId = localStorage.getItem('userId');
+  if (!userId) {
     window.modal.alert('로그인이 필요한 서비스입니다.', '알림').then(() => {
       window.location.href = '/pages/login/login.html';
     });
@@ -50,8 +50,8 @@ async function loadPostData() {
   const post = result.data;
   
   // 작성자 확인 (본인이 작성한 글만 수정 가능)
-  const userNickname = localStorage.getItem('userNickname');
-  if (post.nickname !== userNickname) {
+  const userId = localStorage.getItem('userId');
+  if (post.userId !== userId) {
     await window.modal.alert('본인이 작성한 글만 수정할 수 있습니다.', '권한 없음');
     window.location.href = `/pages/postDetails/postDetails.html?id=${postId}`;
     return;
