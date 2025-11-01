@@ -1,3 +1,6 @@
+import { post } from '/api/fetchApi.js';
+import { API_ENDPOINTS } from '/api/apiList.js';
+
 class Layout {
   constructor() {
     this.injectLayout();
@@ -140,14 +143,19 @@ class Layout {
   /**
    * 로그아웃 처리
    */
-  handleLogout() {
-    // if (confirm("로그아웃 하시겠습니까?")) {
-      localStorage.removeItem("userEmail");
-      localStorage.removeItem("userNickname");
-      localStorage.removeItem("userId");
-      // alert("로그아웃되었습니다.");
-      window.location.href = "/";
-    // }
+  async handleLogout() {
+    const { error, result } = await post(API_ENDPOINTS.AUTH.LOGOUT);
+
+    console.log('로그아웃 결과 : ', result);
+
+    if (error) {
+      throw new error.message;
+    }
+
+    localStorage.removeItem("userEmail");
+    localStorage.removeItem("userNickname");
+    localStorage.removeItem("userId");
+    window.location.href = "/";
   }
 
   /**

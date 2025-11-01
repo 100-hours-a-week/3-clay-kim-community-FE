@@ -1,6 +1,6 @@
 // myProfile.js - 프로필 수정 페이지 (fetchApi 사용)
 
-import { get, fetchApi } from '/api/fetchApi.js';
+import { get, patch, fetchApi } from '/api/fetchApi.js';
 import { API_ENDPOINTS } from '/api/apiList.js';
 
 let originalNickname = ''; // 원래 닉네임 저장
@@ -19,10 +19,10 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 // 로그인 상태 체크
-function checkLoginStatus() {
-  const accessToken = localStorage.getItem('accessToken');
-  if (!accessToken) {
-    alert('로그인이 필요한 서비스입니다.');
+async function checkLoginStatus() {
+  const userId = localStorage.getItem('userId');
+  if (!userId) {
+    await window.modal.alert('로그인이 필요한 서비스입니다.', '오류', '로그인');
     window.location.href = '/pages/login/login.html';
   }
 }
@@ -238,21 +238,21 @@ async function handleProfileSubmit(e) {
       formData.append('profileImage', selectedImageFile);
     }
 
+    console.log('formData', formData);
+    console.log(formData.get('nickname'));
+
     // fetchApi를 사용하여 FormData 전송
-    const response = await fetch(`http://localhost:8080/users/${localStorage.getItem('userId')}`, {
-      method: 'PATCH',
-      headers: {
-        'Authorization': `Bearer ${localStorage.getItem('accessToken')}`
-      },
-      body: formData
-    });
+    const { error, result } = await patch(
+      API_ENDPOINTS.USERS.UPDATE_USER(localStorage.getItem('userId')),
+      formData,
+    );
 
-    if (!response.ok) {
-      const errorData = await response.json();
-      throw new Error(errorData.message || '프로필 수정에 실패했습니다.');
+    console.log('result user : ', result);
+
+    if (error) {
+      await window.modal.alert('프로필 변경에 실패했습니다.', '오류');
+      return;
     }
-
-    const result = await response.json();
 
     // 로컬스토리지 업데이트
     if (nicknameChanged) {

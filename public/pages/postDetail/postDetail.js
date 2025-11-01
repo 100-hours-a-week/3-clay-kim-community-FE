@@ -240,7 +240,8 @@ async function handleLike() {
   if (!userEmail) {
     const alerted = await window.modal.alert(
       '로그인이 필요한 서비스입니다.',
-      '알림'
+      '알림',
+      '로그인'
     );
     if (alerted) {
       window.location.href = '/pages/login/login.html';
@@ -293,7 +294,8 @@ async function handleCommentSubmit() {
   if (!accessToken) {
     const alerted = await window.modal.alert(
       '로그인이 필요한 서비스입니다.',
-      '알림'
+      '알림',
+      '로그인'
     );
     if (alerted) {
       window.location.href = '/pages/login/login.html';

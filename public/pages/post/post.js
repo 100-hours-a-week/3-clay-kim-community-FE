@@ -31,7 +31,7 @@ document.addEventListener('DOMContentLoaded', () => {
 function attachEventListeners() {
   const btnWrite = document.getElementById('btnWrite');
   btnWrite.addEventListener('click', async () => {
-    const accessToken = localStorage.getItem('accessToken');
+    const accessToken = localStorage.getItem('userId');
     if (!accessToken) {
       const alerted = await window.modal.alert(
         '로그인이 필요한 서비스입니다.', 
@@ -71,7 +71,7 @@ async function fetchPosts(cursor = null) {
   currentCursor = data.nextCursor;
   hasNext = data.hasNext;
   
-  // ✅ 첫 로딩: 전체 교체 (append = false)
+  // 첫 로딩: 전체 교체 (append = false)
   renderPostCards(data.posts || [], 'postList', false);
   
   // 페이지네이션 버튼 렌더링
@@ -140,7 +140,7 @@ async function loadMore() {
     console.error('게시글 로딩 실패:', error);
     await window.modal.alert('게시글을 불러오는데 실패했습니다.', '오류');
   }  finally {
-    isLoading = false; // ✅ 로딩 완료
+    isLoading = false; // 로딩 완료
   }
 }
 
