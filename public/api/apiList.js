@@ -3,7 +3,7 @@ export const API_ENDPOINTS = {
   // 인증 관련
   AUTH: {
     LOGIN: '/auth',
-    LOGOUT: '/auth/logout',
+    LOGOUT: '/auth/token',
   },
   
   // 사용자 관련
@@ -29,7 +29,7 @@ export const API_ENDPOINTS = {
     STATUSES: '/posts/statuses',
   },
   
-  // 댓글 관련 (필요시 추가)
+  // 댓글 관련
   COMMENTS: {
     LIST: (postId) => `/posts/${postId}/comments`,
     CREATE: (postId) => `/posts/${postId}/comments`,

@@ -23,9 +23,19 @@ export async function fetchApi(endpoint, options = {}) {
     const url = `${API_CONFIG.BASE_URL}${endpoint}`;
     
     // 헤더 설정
-    const requestHeaders = {
-      ...API_CONFIG.getHeaders(auth),
-      ...headers,
+    let requestHeaders = {};
+
+    if (!(body instanceof FormData)) {
+      // JSON인 경우만 Content-Type 포함
+      requestHeaders = {
+        ...API_CONFIG.getHeaders(auth),
+        ...headers,
+      };
+    } else {
+      // FormData인 경우 Content-Type 제외
+      requestHeaders = {
+        ...headers,
+      };
     };
 
     // fetch 옵션 설정
@@ -37,7 +47,15 @@ export async function fetchApi(endpoint, options = {}) {
 
     // body가 있으면 추가 (GET 요청에는 body 없음)
     if (body && method !== 'GET') {
-      fetchOptions.body = JSON.stringify(body);
+      if (body instanceof FormData) {
+        // FormData는 그대로 전달
+        fetchOptions.body = body;
+        // Content-Type 헤더 제거 (브라우저가 자동 설정)
+        delete fetchOptions.headers['Content-Type'];
+      } else {
+        // 일반 객체는 JSON으로 변환
+        fetchOptions.body = JSON.stringify(body);
+      }
     }
 
     // API 호출
@@ -52,9 +70,6 @@ export async function fetchApi(endpoint, options = {}) {
     if (contentType && contentType.includes('application/json')) {
       data = await response.json();
     }
-
-    console.log("response.status : ", response.status);
-    console.log("auth가 뭐지?", auth);
 
     // 401 Unauthorized - 토큰 만료
     if (response.status === 401 && auth) {
@@ -115,7 +130,6 @@ export async function fetchApi(endpoint, options = {}) {
  */
 async function handleUnauthorized() {
   // 로컬스토리지 클리어
-  localStorage.removeItem('accessToken');
   localStorage.removeItem('userEmail');
   localStorage.removeItem('userNickname');
   localStorage.removeItem('userId');
