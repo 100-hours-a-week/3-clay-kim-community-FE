@@ -31,8 +31,9 @@ document.addEventListener('DOMContentLoaded', () => {
 function attachEventListeners() {
   const btnWrite = document.getElementById('btnWrite');
   btnWrite.addEventListener('click', async () => {
-    const accessToken = localStorage.getItem('userId');
-    if (!accessToken) {
+    const userId = localStorage.getItem('userId');
+    
+    if (!userId) {
       const alerted = await window.modal.alert(
         '로그인이 필요한 서비스입니다.', 
         '알림',

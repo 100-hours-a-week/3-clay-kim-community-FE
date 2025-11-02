@@ -144,18 +144,20 @@ class Layout {
    * 로그아웃 처리
    */
   async handleLogout() {
-    const { error, result } = await post(API_ENDPOINTS.AUTH.LOGOUT);
+    try {
+      const { error, result } = await post(API_ENDPOINTS.AUTH.LOGOUT);
 
-    console.log('로그아웃 결과 : ', result);
-
-    if (error) {
-      throw new error.message;
+      if (error) {
+        console.error('로그아웃 API 실패:', error);
+      }
+    } catch (e) {
+      console.error('로그아웃 요청 중 에러:', e);
+    } finally {
+      localStorage.removeItem("userEmail");
+      localStorage.removeItem("userNickname");
+      localStorage.removeItem("userId");
+      window.location.href = "/";
     }
-
-    localStorage.removeItem("userEmail");
-    localStorage.removeItem("userNickname");
-    localStorage.removeItem("userId");
-    window.location.href = "/";
   }
 
   /**

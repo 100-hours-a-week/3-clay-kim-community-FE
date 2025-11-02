@@ -1,6 +1,7 @@
 // postCreate.js - 게시글 작성 페이지
 
-const API_BASE_URL = 'http://localhost:8080';
+import { post } from '../../api/fetchApi.js';
+
 let awayTrigger = false;
 
 // 페이지 로드 시 실행
@@ -12,8 +13,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
 // 로그인 상태 체크
 function checkLoginStatus() {
-  const accessToken = localStorage.getItem('accessToken');
-  if (!accessToken) {
+  const userId = localStorage.getItem('userId');
+  if (!userId) {
     window.modal.alert('로그인이 필요한 서비스입니다.', '알림').then(() => {
       window.location.href = '/pages/login/login.html';
     });
@@ -132,50 +133,33 @@ function validateForm(title, content) {
 
 // 게시글 작성 API 호출
 async function createPost(title, content) {
-  const accessToken = localStorage.getItem('accessToken');
+  const { error, result } = await post('/posts', {
+    title: title,
+    content: content
+  }, { auth: true });
 
-  const response = await fetch(`${API_BASE_URL}/posts`, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      'access': `${accessToken}`
-    },
-    body: JSON.stringify({
-      title: title,
-      content: content
-    })
-  });
-
-  if (!response.ok) {
-    // 401 Unauthorized - 토큰 만료
-    if (response.status === 401) {
-      await window.modal.alert('로그인이 만료되었습니다.<br>다시 로그인해주세요.', '인증 오류');
-      localStorage.removeItem('accessToken');
-      localStorage.removeItem('nickname');
-      // localStorage.removeItem('refreshToken');
-      localStorage.removeItem('userEmail');
-      window.location.href = '/pages/login/login.html';
+  // 에러 처리
+  if (error) {
+    if (error.status === 401) {
+      // fetchApi에서 이미 처리하므로 return만
       return;
     }
 
-    // 400 Bad Request
-    if (response.status === 400) {
-      const errorData = await response.json();
-      throw new Error(errorData.message || '잘못된 요청입니다.');
+    if (error.status === 400) {
+      throw new Error(error.message || '잘못된 요청입니다.');
     }
 
-    throw new Error('게시글 작성에 실패했습니다.');
+    throw new Error(error.message || '게시글 작성에 실패했습니다.');
   }
 
-  const result = await response.json();
   awayTrigger = true;
-  
+
   // 성공 메시지 표시 후 목록으로 이동
   await window.modal.alert('게시글이 작성되었습니다!', '완료');
 
   // 작성된 게시글로 이동하거나 목록으로 이동
   if (result.data) {
-    window.location.href = `/pages/postDetail/postDetail.html?id=${result.data}`
+    window.location.href = `/pages/postDetail/postDetail.html?id=${result.data}`;
   } else {
     window.location.href = '/pages/post/post.html';
   }
