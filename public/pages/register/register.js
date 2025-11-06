@@ -1,5 +1,5 @@
-import { post, get } from '../../api/fetchApi.js';
-import { API_ENDPOINTS } from '../../api/apiList.js';
+import { post, get } from '/api/fetchApi.js';
+import { API_ENDPOINTS } from '/api/apiList.js';
 
 document.addEventListener("DOMContentLoaded", () => {
   const contentArea = document.getElementById("content-area");
@@ -221,7 +221,7 @@ document.addEventListener("DOMContentLoaded", () => {
     pw.addEventListener("input", validatePassword);
     pwConfirm.addEventListener("input", validatePassword);
 
-    // ✅ 폼 제출 (alert → 화면 메시지 표시)
+    // 폼 제출 (alert → 화면 메시지 표시)
     document.getElementById("registerForm").addEventListener("submit", async (e) => {
       e.preventDefault();
       formMessage.textContent = "";
