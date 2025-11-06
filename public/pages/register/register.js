@@ -1,3 +1,6 @@
+import { post, get } from '../../api/fetchApi.js';
+import { API_ENDPOINTS } from '../../api/apiList.js';
+
 document.addEventListener("DOMContentLoaded", () => {
   const contentArea = document.getElementById("content-area");
 
@@ -105,9 +108,15 @@ document.addEventListener("DOMContentLoaded", () => {
       showLoading(emailError);
 
       try {
-        const res = await fetch(`http://localhost:8080/users/email?email=${email}`);
-        const data = await res.json();
-        const isDuplicate = data.data;
+        const { error, result } = await get(API_ENDPOINTS.USERS.CHECK_EMAIL(email));
+
+        if (error) {
+          emailError.textContent = "서버 오류가 발생했습니다.";
+          emailError.style.color = "#e60012";
+          return;
+        }
+
+        const isDuplicate = result.data;
 
         if (isDuplicate) {
           emailError.textContent = "이미 사용 중인 이메일입니다.";
@@ -138,9 +147,15 @@ document.addEventListener("DOMContentLoaded", () => {
       showLoading(nicknameError);
 
       try {
-        const res = await fetch(`http://localhost:8080/users/nickname?nickname=${nickname}`);
-        const data = await res.json();
-        const isDuplicate = data.data;
+        const { error, result } = await get(API_ENDPOINTS.USERS.CHECK_NICKNAME(nickname));
+
+        if (error) {
+          nicknameError.textContent = "서버 오류가 발생했습니다.";
+          nicknameError.style.color = "#e60012";
+          return;
+        }
+
+        const isDuplicate = result.data;
 
         if (isDuplicate) {
           nicknameError.textContent = "이미 사용 중인 닉네임입니다.";
@@ -238,14 +253,10 @@ document.addEventListener("DOMContentLoaded", () => {
           formData.append("profileImage", selectedImageFile);
         }
 
-        const response = await fetch("http://localhost:8080/users", {
-          method: "POST",
-          body: formData,
-        });
+        const { error, result } = await post(API_ENDPOINTS.USERS.REGISTER, formData);
 
-        if (!response.ok) {
-          const err = await response.json();
-          showFormMessage("회원가입 실패: " + (err.message || "서버 오류"), false);
+        if (error) {
+          showFormMessage("회원가입 실패: " + (error.message || "서버 오류"), false);
           return;
         }
 
@@ -256,7 +267,7 @@ document.addEventListener("DOMContentLoaded", () => {
       }
     });
 
-    // ✅ 화면 메시지 표시 함수
+    // 화면 메시지 표시 함수
     function showFormMessage(text, success) {
       formMessage.textContent = text;
       formMessage.style.color = success ? "#03c75a" : "#e60012";
