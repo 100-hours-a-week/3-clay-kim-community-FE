@@ -1,7 +1,7 @@
 // myProfile.js - 프로필 수정 페이지 (fetchApi 사용)
 
 import { get, patch, fetchApi } from '/api/fetchApi.js';
-import { API_ENDPOINTS } from '/api/apiList.js';
+import { API_ENDPOINTS, BASE_URL } from '/api/apiList.js';
 
 let originalNickname = ''; // 원래 닉네임 저장
 let isNicknameValid = false; // 닉네임 유효성 여부
@@ -62,9 +62,11 @@ async function loadUserInfo() {
   try {
     const { error, result } = await get(API_ENDPOINTS.USERS.GET_USER(userId));
 
-    if (!error && result?.data?.profileImage) {
-      originalProfileImage = result.data.profileImage;
-      document.getElementById('currentProfileImage').src = result.data.profileImage;
+    console.log('result:', result);
+
+    if (!error && result.data.imageUrl) {
+      originalProfileImage = result.data.imageUrl;
+      document.getElementById('currentProfileImage').src = `${BASE_URL}/${result.data.imageUrl}`;
     } else {
       // 기본 이미지 설정
       document.getElementById('currentProfileImage').src = '/images/default-profile.png';
@@ -260,8 +262,8 @@ async function handleProfileSubmit(e) {
       originalNickname = nickname;
     }
 
-    if (imageChanged && result.data?.profileImage) {
-      originalProfileImage = result.data.profileImage;
+    if (imageChanged && result.data.imageUrl) {
+      originalProfileImage = result.data.imageUrl;
     }
 
     isNicknameValid = false;

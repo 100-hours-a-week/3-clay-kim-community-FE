@@ -52,9 +52,9 @@ class Layout {
           <div class="sidebar-section">
             <h3 class="sidebar-title">🔥 인기글</h3>
             <ul>
-              <li><a href="/pages/latest/latest.html"><span class="sidebar-icon">🆕</span>최신글</a></li>
-              <li><a href="/pages/today/today.html"><span class="sidebar-icon">⭐</span>오늘 추천글</a></li>
-              <li><a href="/pages/week/week.html"><span class="sidebar-icon">🏆</span>이번주 추천글</a></li>
+              <li><a href="/pages/post/post.html?period=daily"><span class="sidebar-icon">⭐</span>오늘 추천글</a></li>
+              <li><a href="/pages/post/post.html?period=weekly"><span class="sidebar-icon">🏆</span>이번주 추천글</a></li>
+              <li><a href="/pages/post/post.html?view=top10"><span class="sidebar-icon">🔥</span>이번주 인기 TOP 10</a></li>
             </ul>
           </div>
         </aside>
@@ -106,7 +106,7 @@ class Layout {
             <span class="dropdown-icon">👤</span>
             <span>내 프로필</span>
           </a>
-          <a href="/pages/myPosts/myPosts.html" class="dropdown-item">
+          <a href="/pages/post/post.html?filter=myPosts" class="dropdown-item">
             <span class="dropdown-icon">📝</span>
             <span>내 게시글</span>
           </a>

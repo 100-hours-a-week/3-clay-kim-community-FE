@@ -23,9 +23,48 @@ const observer = new IntersectionObserver((entries) => {
 
 // 페이지 로드 시 실행
 document.addEventListener('DOMContentLoaded', () => {
+  updatePageHeader();
   initPostList();
   attachEventListeners();
 });
+
+// URL 파라미터에 따라 페이지 제목과 설명 업데이트
+function updatePageHeader() {
+  const params = new URLSearchParams(window.location.search);
+  const period = params.get('period');
+  const view = params.get('view');
+
+  const headerConfig = {
+    daily: {
+      title: '⭐ 오늘 추천글',
+      description: '오늘 가장 인기있는 게시글을 확인하세요!'
+    },
+    weekly: {
+      title: '🏆 이번주 추천글',
+      description: '이번 주 가장 인기있는 게시글을 확인하세요!'
+    },
+    top10: {
+      title: '🔥 이번주 인기 TOP 10',
+      description: '이번 주 가장 인기있는 게시글 TOP 10을 확인하세요!'
+    }
+  };
+
+  const key = view || period;
+  const config = headerConfig[key] || {
+    title: '안녕하세요, 아무 말 대잔치 게시판 입니다.',
+    description: '자유롭게 이야기를 나눠보세요!'
+  };
+
+  document.title = config.title.replace(/[⭐🏆🔥]\s/, '') + ' | 아무 말 대잔치';
+
+  const headerElement = document.getElementById('postHeader');
+  if (headerElement) {
+    headerElement.innerHTML = `
+      <h1>${config.title}</h1>
+      <p class="post-description">${config.description}</p>
+    `;
+  }
+}
 
 // 게시글 작성 버튼 이벤트
 function attachEventListeners() {
@@ -60,9 +99,21 @@ async function initPostList() {
 
 // 게시글 목록 불러오기 (cursor 기반)
 async function fetchPosts(cursor = null) {
-  const { error, result } = await get(
-    API_ENDPOINTS.POSTS.LIST(cursor, PAGE_SIZE)
-  );
+  const params = new URLSearchParams(window.location.search);
+  const period = params.get('period');
+  const view = params.get('view');
+
+  let endpoint;
+
+  // view=top10이면 GET /posts/top10
+  if (view === 'top10') {
+    endpoint = API_ENDPOINTS.POSTS.TOP10;
+  } else {
+    // 일반 목록 (period 있으면 필터링)
+    endpoint = API_ENDPOINTS.POSTS.LIST(cursor, PAGE_SIZE, period);
+  }
+
+  const { error, result } = await get(endpoint);
 
   if (error) {
     throw new Error('게시글을 불러오는데 실패했습니다.');
@@ -71,32 +122,15 @@ async function fetchPosts(cursor = null) {
   const data = result.data;
   currentCursor = data.nextCursor;
   hasNext = data.hasNext;
-  
+
   // 첫 로딩: 전체 교체 (append = false)
   renderPostCards(data.posts || [], 'postList', false);
-  
+
   // 페이지네이션 버튼 렌더링
-  // renderPaginationButton();
   renderPaginationAuto();
 }
 
-// 페이지네이션 버튼 렌더링
-function renderPaginationButton() {
-  const pagination = document.getElementById('pagination');
-  isLoading = true;
-
-  if (!hasNext) {
-    pagination.innerHTML = '';
-    return;
-  }
-  
-  pagination.innerHTML = `
-    <button class="page-btn" id="btnLoadMore">더 보기</button>
-  `;
-  
-  document.getElementById('btnLoadMore').addEventListener('click', loadMore);
-}
-
+// 자동 페이지네이션 렌더링 (Intersection Observer)
 function renderPaginationAuto() {
   const pagination = document.getElementById('pagination');
   
@@ -118,13 +152,24 @@ function renderPaginationAuto() {
 // 더 보기 (다음 페이지) - renderPostCards 통일!
 async function loadMore() {
   if (!hasNext || !currentCursor || isLoading) return;
-  
+
   isLoading = true; // 로딩 시작
 
   try {
-    const { error, result } = await get(
-      API_ENDPOINTS.POSTS.LIST(currentCursor, PAGE_SIZE)
-    );
+    const params = new URLSearchParams(window.location.search);
+    const period = params.get('period');
+    const view = params.get('view');
+
+    let endpoint;
+
+    // fetchPosts()와 동일한 로직
+    if (view === 'top10') {
+      endpoint = API_ENDPOINTS.POSTS.TOP10;
+    } else {
+      endpoint = API_ENDPOINTS.POSTS.LIST(currentCursor, PAGE_SIZE, period);
+    }
+
+    const { error, result } = await get(endpoint);
 
     if (error) {
       throw new Error('게시글을 불러오는데 실패했습니다.');
@@ -132,7 +177,7 @@ async function loadMore() {
 
     currentCursor = result.data.nextCursor;
     hasNext = result.data.hasNext;
-    
+
     // 더보기: 기존 목록에 추가 (append = true)
     renderPostCards(result.data.posts || [], 'postList', true);
     // 페이지네이션 버튼 업데이트
