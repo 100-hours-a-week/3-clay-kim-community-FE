@@ -33,6 +33,7 @@ function updatePageHeader() {
   const params = new URLSearchParams(window.location.search);
   const period = params.get('period');
   const view = params.get('view');
+  const filter = params.get('filter');
 
   const headerConfig = {
     daily: {
@@ -46,10 +47,14 @@ function updatePageHeader() {
     top10: {
       title: '🔥 이번주 인기 TOP 10',
       description: '이번 주 가장 인기있는 게시글 TOP 10을 확인하세요!'
+    },
+    myPosts: {
+      title: '📝 내 게시글',
+      description: '내가 작성한 게시글을 확인하세요!'
     }
   };
 
-  const key = view || period;
+  const key = filter || view || period;
   const config = headerConfig[key] || {
     title: '안녕하세요, 아무 말 대잔치 게시판 입니다.',
     description: '자유롭게 이야기를 나눠보세요!'
@@ -102,18 +107,30 @@ async function fetchPosts(cursor = null) {
   const params = new URLSearchParams(window.location.search);
   const period = params.get('period');
   const view = params.get('view');
+  const filter = params.get('filter');
 
   let endpoint;
 
   // view=top10이면 GET /posts/top10
   if (view === 'top10') {
     endpoint = API_ENDPOINTS.POSTS.TOP10;
+  } else if (filter === 'myPosts') {
+    // 내 게시글 필터링
+    const nickname = localStorage.getItem('userNickname');
+    if (!nickname) {
+      throw new Error('로그인이 필요합니다.');
+    }
+    // /posts?nickname=실제닉네임 형태로 요청
+    const baseEndpoint = API_ENDPOINTS.POSTS.LIST(cursor, PAGE_SIZE, period);
+    endpoint = `${baseEndpoint}&nickname=${encodeURIComponent(nickname)}`;
   } else {
     // 일반 목록 (period 있으면 필터링)
     endpoint = API_ENDPOINTS.POSTS.LIST(cursor, PAGE_SIZE, period);
   }
 
   const { error, result } = await get(endpoint);
+
+  console.log('error : ', error);
 
   if (error) {
     throw new Error('게시글을 불러오는데 실패했습니다.');

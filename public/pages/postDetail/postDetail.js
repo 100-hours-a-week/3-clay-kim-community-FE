@@ -5,8 +5,6 @@ import {
   renderCommentAccordion,
   renderCommentsInGroup,
   updateCommentCount,
-  appendComment,
-  removeComment,
   updateCommentContent
 } from '/components/comment/comment.js';
 
@@ -40,6 +38,8 @@ document.addEventListener('DOMContentLoaded', () => {
 async function initPostDetail() {
   try {
     await fetchPostDetail();
+    await fetchLikeStatus();
+    await fetchPostStatus();
     await fetchComments();
   } catch (error) {
     console.error('게시글 로딩 실패:', error);
@@ -65,6 +65,69 @@ async function fetchPostDetail() {
   document.getElementById('postDetail').style.display = 'block';
 }
 
+// 좋아요 UI 업데이트 공통 함수
+function updateLikeUI(likeStatus, likeCount) {
+  isLiked = likeStatus;
+  const btnLike = document.getElementById('btnLike');
+
+  console.log('isLiked', isLiked);
+
+  if (likeStatus) {
+    btnLike.classList.add('liked');
+  } else {
+    btnLike.classList.remove('liked');
+  }
+
+  document.getElementById('likeCount').textContent = likeCount || 0;
+}
+
+// 좋아요 상태 확인
+async function fetchLikeStatus() {
+  const userId = localStorage.getItem('userId');
+
+  // 로그인하지 않은 경우 스킵
+  // if (!userId) {
+    // return;
+  // }
+
+  try {
+    const { error, result } = await get(
+      API_ENDPOINTS.POSTS.GET_LIKE_STATUS(postId),
+      { auth: true }
+    );
+
+    if (error) {
+      console.error('좋아요 상태 조회 실패:', error);
+      return;
+    }
+
+    // 좋아요 상태 반영
+    updateLikeUI(result.data.likeStatus || false, result.data.likeCount);
+  } catch (error) {
+    console.error('좋아요 상태 조회 중 오류:', error);
+  }
+}
+
+// 게시글 상태(조회수) 가져오기
+async function fetchPostStatus() {
+  try {
+    const { error, result } = await get(
+      API_ENDPOINTS.POSTS.STATUSES(postId)
+    );
+
+    if (error) {
+      console.error('게시글 상태 조회 실패:', error);
+      return;
+    }
+
+    // 조회수 업데이트
+    const viewCount = result.data.viewCount || 0;
+    document.getElementById('postViews').textContent = viewCount;
+  } catch (error) {
+    console.error('게시글 상태 조회 중 오류:', error);
+  }
+}
+
 // 게시글 렌더링
 function renderPost(post) {
   document.getElementById('postTitle').textContent = post.title;
@@ -74,9 +137,6 @@ function renderPost(post) {
   document.getElementById('postViews').textContent = post.viewCount || 0;
   document.getElementById('likeCount').textContent = post.likeCount || 0;
 
-  console.log('확인용 : ', localStorage.getItem("userEmail"));
-  console.log('확인용 : ', postAuthor)
-
   // 작성자인 경우 수정/삭제 버튼 표시
   checkAuthor(post);
 }
@@ -84,10 +144,7 @@ function renderPost(post) {
 // 작성자 확인
 function checkAuthor(post) {
   const userId = localStorage.getItem('userId');
-  console.log('userId입니다:', userId);
   const isAuthor = userId === post.userId;
-  console.log('결과입니다,:', isAuthor && userId === post.userId);
-  console.log('결과입니다,:', isAuthor === post.userId);
 
   if (isAuthor) {
     document.getElementById('btnEdit').style.display = 'inline-block';
@@ -112,28 +169,43 @@ async function fetchComments() {
     
     // 전체 댓글 수 저장
     totalComments = countResult.data.totalElements || 0;
-    
+
     if (totalComments === 0) {
       renderCommentAccordion(0, [], 'commentList', handleCommentToggle, handleCommentDelete, PAGE_SIZE);
       updateCommentCount(0);
       return;
     }
-    
+
+    // last가 true면 이미 모든 댓글을 가져온 상태 (댓글이 1개만 있는 경우)
+    if (countResult.data.last) {
+      const latestComments = countResult.data.content || [];
+      renderCommentAccordion(
+        totalComments,
+        latestComments,
+        'commentList',
+        handleCommentToggle,
+        handleCommentDelete,
+        PAGE_SIZE
+      );
+      updateCommentCount(totalComments);
+      return;
+    }
+
     // 마지막 페이지 번호 계산
     const lastPage = Math.max(0, Math.ceil(totalComments / PAGE_SIZE) - 1);
-    
+
     // 마지막 페이지의 댓글만 조회 (최신 댓글들)
     const { error, result } = await get(
       `${API_ENDPOINTS.COMMENTS.LIST(postId)}?page=${lastPage}&size=${PAGE_SIZE}`
     );
-    
+
     if (error) {
       console.error('최신 댓글 조회 실패:', error);
       renderCommentAccordion(totalComments, [], 'commentList', handleCommentToggle, handleCommentDelete, PAGE_SIZE);
       updateCommentCount(totalComments);
       return;
     }
-    
+
     const latestComments = result.data.content || [];
     
     // 아코디언 렌더링 (전체 댓글 수 + 최신 댓글들)
@@ -235,9 +307,9 @@ function attachEventListeners() {
 
 // 좋아요 처리
 async function handleLike() {
-  const userEmail = localStorage.getItem('userEmail');
-  
-  if (!userEmail) {
+  const userId = localStorage.getItem('userId');
+
+  if (!userId) {
     const alerted = await window.modal.alert(
       '로그인이 필요한 서비스입니다.',
       '알림',
@@ -249,11 +321,27 @@ async function handleLike() {
     return;
   }
 
-  // UI 업데이트
-  document.getElementById('likeCount').textContent = currentPost.likeCount;
+  try {
+    // 좋아요 토글 API 호출
+    const { error, result } = await post(
+      API_ENDPOINTS.POSTS.TOGGLE_LIKE(postId),
+      {},
+      { auth: true }
+    );
 
-  // TODO: 서버에 좋아요 API 호출
-  // await post(API_ENDPOINTS.POSTS.LIKE(postId), {}, { auth: true });
+    if (error) {
+      console.error('좋아요 토글 실패:', error);
+      await window.modal.alert('좋아요 처리에 실패했습니다.', '오류');
+      return;
+    }
+
+    // UI 업데이트
+    updateLikeUI(result.data.likeStatus, result.data.likeCount);
+
+  } catch (error) {
+    console.error('좋아요 처리 중 오류:', error);
+    await window.modal.alert('좋아요 처리에 실패했습니다.', '오류');
+  }
 }
 
 // 게시글 수정
@@ -276,8 +364,6 @@ async function handleDelete() {
     { auth: true, autoRedirect: true }
   );
 
-  console.log("error", error);
-
   if (error) {
     await window.modal.alert('게시글 삭제에 실패했습니다.', '오류');
     return;
@@ -289,9 +375,9 @@ async function handleDelete() {
 
 // 댓글 작성
 async function handleCommentSubmit() {
-  const accessToken = localStorage.getItem('accessToken');
+  const userId = localStorage.getItem('userId');
   
-  if (!accessToken) {
+  if (!userId) {
     const alerted = await window.modal.alert(
       '로그인이 필요한 서비스입니다.',
       '알림',

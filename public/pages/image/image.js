@@ -41,8 +41,6 @@ async function handleSingleUpload() {
       body: formData
     });
 
-    console.log("error", error);
-
     const result = await response.json();
     displayResponse(result);
 

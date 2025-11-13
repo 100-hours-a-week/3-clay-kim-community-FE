@@ -60,9 +60,7 @@ async function loadUserInfo() {
 
   // 프로필 이미지 불러오기
   try {
-    const { error, result } = await get(API_ENDPOINTS.USERS.GET_USER(userId));
-
-    console.log('result:', result);
+    const { error, result } = await get(API_ENDPOINTS.USERS.GET_USER(userId), { auth: true });
 
     if (!error && result.data.imageUrl) {
       originalProfileImage = result.data.imageUrl;
@@ -102,6 +100,7 @@ function initProfileForm() {
 
       // 이미지 파일 타입 체크
       if (!file.type.startsWith('image/')) {
+        console.log('file.type : ', file.type);
         window.modal.alert('이미지 파일만 업로드 가능합니다.', '알림');
         e.target.value = '';
         return;
@@ -240,16 +239,11 @@ async function handleProfileSubmit(e) {
       formData.append('profileImage', selectedImageFile);
     }
 
-    console.log('formData', formData);
-    console.log(formData.get('nickname'));
-
     // fetchApi를 사용하여 FormData 전송
     const { error, result } = await patch(
       API_ENDPOINTS.USERS.UPDATE_USER(localStorage.getItem('userId')),
       formData,
     );
-
-    console.log('result user : ', result);
 
     if (error) {
       await window.modal.alert('프로필 변경에 실패했습니다.', '오류');
@@ -387,10 +381,7 @@ async function handlePasswordSubmit(e) {
       auth: true
     });
 
-    console.log("result", result);
-
     if (error) {
-        console.log("error", error);
       if (error.status === 400) {
         await window.modal.alert('현재 비밀번호가 일치하지 않습니다.', '오류');
       } else {

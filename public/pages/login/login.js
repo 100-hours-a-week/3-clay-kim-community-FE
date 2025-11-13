@@ -7,10 +7,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // 에러 메시지 표시 함수
   function showError(message) {
-    console.log("showError 호출:", message); // 디버깅용
     errorMessage.textContent = message;
     errorMessage.style.display = "block"; // CSS 클래스 대신 직접 스타일 적용
-    console.log("errorMessage element:", errorMessage); // 디버깅용
   }
 
   // 에러 메시지 숨김 함수
@@ -40,16 +38,12 @@ document.addEventListener("DOMContentLoaded", () => {
         { auth: false }
       );
 
-      console.log(error);
+      console.log('[login.js]: ', error);
 
       if (error) {
         showError("아이디 또는 비밀번호가 잘못 되었습니다. 아이디와 비밀번호를 정확히 입력해 주세요.");
         return;
       } 
-
-      // 응답 본문에서 데이터 추출
-      console.log("로그인 응답:", result);
-
 
       // localStorage에 토큰과 이메일 저장
       if (result) {
@@ -57,7 +51,6 @@ document.addEventListener("DOMContentLoaded", () => {
         localStorage.setItem("userNickname", result.data.nickname);
         localStorage.setItem("userId", result.data.userId);
         
-        console.log("로그인 성공");
         window.location.href = "/pages/post/post.html";
       }
 

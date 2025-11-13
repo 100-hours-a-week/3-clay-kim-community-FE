@@ -10,6 +10,7 @@ export const API_ENDPOINTS = {
   AUTH: {
     LOGIN: '/auth',
     LOGOUT: '/auth/token',
+    REFRESH: '/auth/refresh',
   },
   
   // 사용자 관련
@@ -35,7 +36,9 @@ export const API_ENDPOINTS = {
     DETAIL: (id) => `/posts/${id}`,
     UPDATE: (id) => `/posts/${id}`,
     DELETE: (id) => `/posts/${id}/deactivation`,
-    STATUSES: '/posts/statuses',
+    STATUSES: (id) => `/posts/${id}/statuses`,
+    TOGGLE_LIKE: (postId) => `/posts/${postId}/likes`,
+    GET_LIKE_STATUS: (postId) => `/posts/${postId}/likes`,
   },
   
   // 댓글 관련
