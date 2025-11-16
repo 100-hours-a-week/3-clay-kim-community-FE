@@ -1,5 +1,5 @@
-import { post } from '/api/fetchApi.js';
-import { API_ENDPOINTS } from '/api/apiList.js';
+import { post } from '/utils/fetchApi.js';
+import { API_ENDPOINTS } from '/utils/apiList.js';
 
 document.addEventListener("DOMContentLoaded", () => {
   const form = document.getElementById("loginForm");

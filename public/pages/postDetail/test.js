@@ -1,6 +1,6 @@
 // 게시글 상세 페이지
-import { get, post, patch } from '/api/fetchApi.js';
-import { API_ENDPOINTS } from '/api/apiList.js';
+import { get, post, patch } from '/utils/fetchApi.js';
+import { API_ENDPOINTS } from '/utils/apiList.js';
 
 let postId = null;
 let currentPost = null;
@@ -67,10 +67,7 @@ function renderPost(post) {
 // 작성자 확인
 function checkAuthor(post) {
   const userId = localStorage.getItem('userId');
-  console.log('userId입니다:', userId);
   const isAuthor = userId === post.userId;
-  console.log('결과입니다,:', userId && userId === post.userId);
-  console.log('결과입니다,:', userId === post.userId);
 
   if (isAuthor) {
     document.getElementById('btnEdit').style.display = 'inline-block';

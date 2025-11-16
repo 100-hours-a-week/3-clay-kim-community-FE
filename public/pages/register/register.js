@@ -1,5 +1,5 @@
-import { post, get } from '/api/fetchApi.js';
-import { API_ENDPOINTS } from '/api/apiList.js';
+import { post, get } from '/utils/fetchApi.js';
+import { API_ENDPOINTS } from '/utils/apiList.js';
 
 document.addEventListener("DOMContentLoaded", () => {
   const contentArea = document.getElementById("content-area");

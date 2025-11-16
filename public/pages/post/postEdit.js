@@ -1,6 +1,6 @@
 // postEdit.js - 게시글 수정 페이지
-import { get, patch } from '/api/fetchApi.js';
-import { API_ENDPOINTS } from '/api/apiList.js';
+import { get, patch } from '/utils/fetchApi.js';
+import { API_ENDPOINTS } from '/utils/apiList.js';
 
 let awayTrigger = false;
 let postId = null;

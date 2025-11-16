@@ -1,7 +1,7 @@
 // 게시글 목록 페이지 - 최종 버전
 import { renderPostCards } from '/components/postCard/postCard.js';
-import { get } from '/api/fetchApi.js';
-import { API_ENDPOINTS } from '/api/apiList.js';
+import { get } from '/utils/fetchApi.js';
+import { API_ENDPOINTS } from '/utils/apiList.js';
 
 let currentCursor = null;
 let hasNext = false;

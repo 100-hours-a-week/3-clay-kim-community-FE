@@ -1,7 +1,7 @@
 // myProfile.js - 프로필 수정 페이지 (fetchApi 사용)
 
-import { get, patch, fetchApi } from '/api/fetchApi.js';
-import { API_ENDPOINTS, BASE_URL } from '/api/apiList.js';
+import { get, patch, fetchApi } from '/utils/fetchApi.js';
+import { API_ENDPOINTS, BASE_URL } from '/utils/apiList.js';
 
 let originalNickname = ''; // 원래 닉네임 저장
 let isNicknameValid = false; // 닉네임 유효성 여부

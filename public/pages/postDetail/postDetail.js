@@ -1,6 +1,6 @@
 // 게시글 상세 페이지
-import { get, post, patch } from '/api/fetchApi.js';
-import { API_ENDPOINTS } from '/api/apiList.js';
+import { get, post, patch } from '/utils/fetchApi.js';
+import { API_ENDPOINTS } from '/utils/apiList.js';
 import {
   renderCommentAccordion,
   renderCommentsInGroup,
