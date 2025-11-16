@@ -1,6 +1,6 @@
 // postCreate.js - 게시글 작성 페이지
 
-import { post } from '../../api/fetchApi.js';
+import { post } from '../../utils/fetchApi.js';
 
 let awayTrigger = false;
 
