@@ -88,7 +88,7 @@ jobs:
             echo "Running health check..."
             for i in {1..10}; do
               sleep 2
-              if docker exec community-front-\$TARGET curl -s http://localhost:3000/health; then
+              if curl -s http://localhost:3000/health > /dev/null; then
                 echo "Health check passed"
                 break
               elif [ \$i -eq 10 ]; then
@@ -101,7 +101,7 @@ jobs:
           else
             echo "First deploy — skipping health check"
           fi
-
+          
           echo "Switching Nginx to \$TARGET"
           sed -i "s/community-front-[a-z]\\+/community-front-\$TARGET/g" nginx.conf
           docker exec nginx-proxy nginx -s reload
