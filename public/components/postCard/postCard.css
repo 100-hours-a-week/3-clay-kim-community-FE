@@ -33,12 +33,26 @@
   color: #666;
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: 8px;
 }
 
-.post-item-author::before {
-  content: '👤';
+.post-author-profile-image {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 1px solid #e0e0e0;
+}
+
+.post-author-profile-fallback {
   font-size: 14px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.post-author-name {
+  display: inline;
 }
 
 .post-item-meta {

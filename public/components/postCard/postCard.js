@@ -1,16 +1,28 @@
 // Post Card Component - 개선 버전
+import { BASE_URL } from '/utils/apiList.js';
 
 // 게시글 카드 생성
 function createPostCard(post) {
+  // 프로필 이미지 URL 처리
+  const imageUrl = post.imageUrl || post.profileImage || post.authorProfileImage || post.userProfileImage || '';
+  const profileImageUrl = imageUrl ? `${BASE_URL}/${imageUrl}` : '';
+  const profileImageHtml = profileImageUrl
+    ? `<img src="${escapeHtml(profileImageUrl)}" alt="프로필" class="post-author-profile-image" onerror="this.style.display='none'; this.nextElementSibling.style.display='inline';">
+       <span class="post-author-profile-fallback" style="display:none;">👤</span>`
+    : `<span class="post-author-profile-fallback">👤</span>`;
+
   return `
     <div class="post-item" data-post-id="${post.id}">
       <div class="post-item-header">
         <div>
           <div class="post-item-title">${escapeHtml(post.title)}</div>
-          <div class="post-item-author">${escapeHtml(post.nickname || post.authorEmail || post.author || '익명')}</div>
+          <div class="post-item-author">
+            ${profileImageHtml}
+            <span class="post-author-name">${escapeHtml(post.nickname || post.authorEmail || post.author || '익명')}</span>
+          </div>
         </div>
       </div>
-      
+
       <div class="post-item-meta">
         <div class="post-meta-item">
           <span class="icon">조회수</span>

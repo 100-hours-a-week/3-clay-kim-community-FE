@@ -1,6 +1,6 @@
 // 게시글 상세 페이지
 import { get, post, patch } from '/utils/fetchApi.js';
-import { API_ENDPOINTS } from '/utils/apiList.js';
+import { API_ENDPOINTS, BASE_URL } from '/utils/apiList.js';
 import {
   renderCommentAccordion,
   renderCommentsInGroup,
@@ -136,6 +136,17 @@ function renderPost(post) {
   document.getElementById('postContent').textContent = post.content;
   document.getElementById('postViews').textContent = post.viewCount || 0;
   document.getElementById('likeCount').textContent = post.likeCount || 0;
+
+  // 프로필 이미지 처리
+  const authorIcon = document.querySelector('.author-icon');
+  const imageUrl = post.profileImageUrl || post.imageUrl || post.profileImage || post.authorProfileImage || post.userProfileImage || '';
+
+  if (imageUrl) {
+    const profileImageUrl = `${BASE_URL}/${imageUrl}`;
+    authorIcon.innerHTML = `<img src="${profileImageUrl}" alt="프로필" class="post-author-profile-image" onerror="this.style.display='none'; this.parentElement.innerHTML='👤';">`;
+  } else {
+    authorIcon.textContent = '👤';
+  }
 
   // 작성자인 경우 수정/삭제 버튼 표시
   checkAuthor(post);

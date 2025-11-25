@@ -1,6 +1,7 @@
 // postCreate.js - 게시글 작성 페이지
 
 import { post } from '../../utils/fetchApi.js';
+import { API_ENDPOINTS } from '../../utils/apiList.js';
 
 let awayTrigger = false;
 
@@ -12,10 +13,16 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 // 로그인 상태 체크
-function checkLoginStatus() {
-  const userId = localStorage.getItem('userId');
-  if (!userId) {
-    window.modal.alert('로그인이 필요한 서비스입니다.', '알림').then(() => {
+async function checkLoginStatus() {
+  // refreshToken 유효성 검증 (토큰이 없거나 만료된 경우 401 에러 발생)
+  const { error } = await get(API_ENDPOINTS.AUTH.REFRESH, {}, { auth: true });
+
+  if (error) {
+    // localStorage 정리
+    localStorage.clear();
+
+    // 로그인 페이지로 리다이렉트
+    window.modal.alert('로그인 시간이 만료되었습니다. 다시 로그인해주세요.', '알림').then(() => {
       window.location.href = '/pages/login/login.html';
     });
   }

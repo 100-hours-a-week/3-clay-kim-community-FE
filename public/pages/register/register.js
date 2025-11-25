@@ -256,6 +256,11 @@ document.addEventListener("DOMContentLoaded", () => {
         const { error, result } = await post(API_ENDPOINTS.USERS.REGISTER, formData);
 
         if (error) {
+          // conflict 상태이고 이미지 타입 에러인 경우
+          if (error.status === 409 && error.message === "이미지 타입 에러") {
+            showFormMessage("업로드 가능한 이미지 형식이 아닙니다. 이미지 타입을 확인해주세요.", false);
+            return;
+          }
           showFormMessage("회원가입 실패: " + (error.message || "서버 오류"), false);
           return;
         }
