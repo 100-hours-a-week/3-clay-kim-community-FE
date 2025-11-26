@@ -84,28 +84,26 @@ jobs:
           docker compose pull community-front-\$TARGET
           docker compose up -d community-front-\$TARGET
 
-          if [ "$STOP" != "none" ]; then
+          if [ "\$STOP" != "none" ]; then
             echo "Running health check..."
             sleep 5
             
             for i in {1..30}; do
-              echo "Attempt $i/30..."
-              
-              if ! docker ps | grep -q community-front-$TARGET; then
+              if ! docker ps | grep -q community-front-\$TARGET; then
                 echo "Container stopped!"
-                docker logs community-front-$TARGET --tail 50
-                docker compose restart community-front-$STOP
+                docker logs community-front-\$TARGET --tail 50
+                docker compose restart community-front-\$STOP
                 exit 1
               fi
               
-              if docker exec nginx-proxy curl -sf http://community-front-$TARGET:3000 > /dev/null 2>&1; then
+              if docker exec nginx-proxy curl -sf http://community-front-\$TARGET:3000 > /dev/null 2>&1; then
                 echo "Health check passed"
                 break
-              elif [ $i -eq 10 ]; then
+              elif [ \$i -eq 10 ]; then
                 echo "Health check failed. Rolling back..."
-                docker logs community-front-$TARGET --tail 50
-                docker stop community-front-$TARGET
-                docker compose restart community-front-$STOP
+                docker logs community-front-\$TARGET --tail 50
+                docker stop community-front-\$TARGET
+                docker compose restart community-front-\$STOP
                 exit 1
               fi
               
@@ -116,13 +114,13 @@ jobs:
             sleep 10
           fi
           
-          echo "Switching Nginx to $TARGET"
-          sed -i "s/community-front-[a-z]\+:3000/community-front-$TARGET:3000/g" nginx.conf
+          echo "Switching Nginx to \$TARGET"
+          sed -i "s/community-front-[a-z]\+:3000/community-front-\$TARGET:3000/g" nginx.conf
           docker exec nginx-proxy nginx -s reload
 
           if [ "$STOP" != "none" ]; then
-            echo "Stopping: community-front-$STOP"
-            docker stop community-front-$STOP || true
+            echo "Stopping: community-front-\$STOP"
+            docker stop community-front-\$STOP || true
           fi
           
           echo "Deployment completed!"
