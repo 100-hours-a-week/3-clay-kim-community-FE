@@ -71,10 +71,10 @@ jobs:
 
           if docker ps | grep community-front-blue; then
             TARGET=green
-            STOP=community-front-blue
+            STOP=blue
           elif docker ps | grep community-front-green; then
             TARGET=blue
-            STOP=community-front-green
+            STOP=green
           else
             TARGET=blue
             STOP=none
