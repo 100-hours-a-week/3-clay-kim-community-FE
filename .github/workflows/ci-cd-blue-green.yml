@@ -115,7 +115,7 @@ jobs:
           fi
           
           echo "Switching Nginx to \$TARGET"
-          cd /home/${{ secrets.SERVER_USER }}/nginx/locations
+          cd /home/${{ secrets.SERVER_USER }}/nginx/conf.d/locations
           sed -i "s/community-front-[a-z]\\+:3000/community-front-\$TARGET:3000/g" frontend.conf
           docker exec nginx-proxy nginx -s reload
 
