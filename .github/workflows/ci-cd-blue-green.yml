@@ -115,7 +115,8 @@ jobs:
           fi
           
           echo "Switching Nginx to \$TARGET"
-          sed -i "s/community-front-[a-z]\\+:3000/community-front-\$TARGET:3000/g" nginx.conf
+          cd /home/${{ secrets.SERVER_USER }}/nginx/locations
+          sed -i "s/community-front-[a-z]\\+:3000/community-front-\$TARGET:3000/g" frontend.conf
           docker exec nginx-proxy nginx -s reload
 
           if [ "$STOP" != "none" ]; then
