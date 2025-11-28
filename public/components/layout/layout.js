@@ -19,7 +19,7 @@ class Layout {
       headerPlaceholder.innerHTML = `
         <header class="header">
           <div class="header-container">
-            <a href="/" class="header-logo">🎉 아무 말 대잔치</a>
+            <a href="/" class="header-logo">🚴‍♂️ 종주 메이트</a>
             <div class="header-user" id="headerUser"></div>
           </div>
         </header>
@@ -31,7 +31,7 @@ class Layout {
     if (footerPlaceholder) {
       footerPlaceholder.innerHTML = `
         <footer class="footer">
-          <p>© 2025 아무 말 대잔치 | <a href="http://localhost:8080/tos-policy">이용약관</a> | <a href="/pages/privacyPolicy/privacyPolicy.html">개인정보처리방침</a></p>
+          <p>© 2025 종주 메이트 | <a href="http://localhost:8080/tos-policy">이용약관</a> | <a href="/pages/privacyPolicy/privacyPolicy.html">개인정보처리방침</a></p>
         </footer>
       `;
     }
@@ -45,16 +45,16 @@ class Layout {
             <h3 class="sidebar-title">📌 메뉴</h3>
             <ul>
               <li><a href="/"><span class="sidebar-icon">🏠</span>홈</a></li>
-              <li><a href="/pages/post/post.html"><span class="sidebar-icon">📝</span>전체 게시글</a></li>
+              <li><a href="/pages/post/post.html"><span class="sidebar-icon">🚴</span>전체 종주기록</a></li>
             </ul>
           </div>
 
           <div class="sidebar-section">
-            <h3 class="sidebar-title">🔥 인기글</h3>
+            <h3 class="sidebar-title">🏃 종주 일지</h3>
             <ul>
-              <li><a href="/pages/post/post.html?period=daily"><span class="sidebar-icon">⭐</span>오늘 추천글</a></li>
-              <li><a href="/pages/post/post.html?period=weekly"><span class="sidebar-icon">🏆</span>이번주 추천글</a></li>
-              <li><a href="/pages/post/post.html?view=top10"><span class="sidebar-icon">🔥</span>이번주 인기 TOP 10</a></li>
+              <li><a href="/pages/post/post.html?period=daily"><span class="sidebar-icon">🧭</span>최신 종주기록</a></li>
+              <li><a href="/pages/post/post.html?period=weekly"><span class="sidebar-icon">🗺️</span>인기 종주 코스</a></li>
+              <li><a href="/pages/post/post.html?view=top10"><span class="sidebar-icon">🔥</span>완주 인증 TOP 10</a></li>
             </ul>
           </div>
         </aside>

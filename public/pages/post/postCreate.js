@@ -1,4 +1,4 @@
-// postCreate.js - 게시글 작성 페이지
+// postCreate.js - 종주 기록 작성 페이지
 
 import { post } from '../../utils/fetchApi.js';
 import { API_ENDPOINTS } from '../../utils/apiList.js';
@@ -98,8 +98,8 @@ async function handleSubmit(e) {
   try {
     await createPost(title, content);
   } catch (error) {
-    console.error('게시글 작성 실패:', error);
-    await window.modal.alert('게시글 작성에 실패했습니다.<br>잠시 후 다시 시도해주세요.', '오류');
+    console.error('종주 기록 작성 실패:', error);
+    await window.modal.alert('종주 기록 작성에 실패했습니다.<br>잠시 후 다시 시도해주세요.', '오류');
   } finally {
     // 버튼 활성화 및 로딩 상태 해제
     btnSubmit.disabled = false;
@@ -138,7 +138,7 @@ function validateForm(title, content) {
   return true;
 }
 
-// 게시글 작성 API 호출
+// 종주 기록 작성 API 호출
 async function createPost(title, content) {
   const { error, result } = await post('/posts', {
     title: title,
@@ -156,15 +156,15 @@ async function createPost(title, content) {
       throw new Error(error.message || '잘못된 요청입니다.');
     }
 
-    throw new Error(error.message || '게시글 작성에 실패했습니다.');
+    throw new Error(error.message || '종주 기록 작성에 실패했습니다.');
   }
 
   awayTrigger = true;
 
   // 성공 메시지 표시 후 목록으로 이동
-  await window.modal.alert('게시글이 작성되었습니다!', '완료');
+  await window.modal.alert('종주 기록이 작성되었습니다!', '완료');
 
-  // 작성된 게시글로 이동하거나 목록으로 이동
+  // 작성된 종주 기록으로 이동하거나 목록으로 이동
   if (result.data) {
     window.location.href = `/pages/postDetail/postDetail.html?id=${result.data}`;
   } else {

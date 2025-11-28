@@ -1,4 +1,4 @@
-// 게시글 상세 페이지
+// 종주 기록 상세 페이지
 import { get, post, patch } from '/utils/fetchApi.js';
 import { API_ENDPOINTS, BASE_URL } from '/utils/apiList.js';
 import {
@@ -16,7 +16,7 @@ const PAGE_SIZE = 20;   // 페이지당 댓글 수
 
 // 페이지 로드 시 실행
 document.addEventListener('DOMContentLoaded', () => {
-  // URL에서 게시글 ID 가져오기
+  // URL에서 종주 기록 ID 가져오기
   const urlParams = new URLSearchParams(window.location.search);
   postId = urlParams.get('id');
 
@@ -25,13 +25,13 @@ document.addEventListener('DOMContentLoaded', () => {
     return;
   }
 
-  // 게시글 초기화
+  // 종주 기록 초기화
   initPostDetail();
   attachEventListeners();
 });
 
 /**
- * 게시글 내용불러오기
+ * 종주 기록 내용불러오기
  * 댓글 불러오기
  * + 조회수 불러오기
  */
@@ -42,13 +42,13 @@ async function initPostDetail() {
     await fetchPostStatus();
     await fetchComments();
   } catch (error) {
-    console.error('게시글 로딩 실패:', error);
-    showError('게시글을 불러오는데 실패했습니다.');
+    console.error('종주 기록 로딩 실패:', error);
+    showError('종주 기록을 불러오는데 실패했습니다.');
   }
 }
 
 /**
- * 게시글 상세 정보 가져오기
+ * 종주 기록 상세 정보 가져오기
  */ 
 async function fetchPostDetail() {
   const { error, result } = await get(API_ENDPOINTS.POSTS.DETAIL(postId));
@@ -59,8 +59,8 @@ async function fetchPostDetail() {
 
   currentPost = result.data;
   renderPost(currentPost);
-  
-  // 로딩 숨기고 게시글 표시
+
+  // 로딩 숨기고 종주 기록 표시
   document.getElementById('loading').style.display = 'none';
   document.getElementById('postDetail').style.display = 'block';
 }
@@ -108,7 +108,7 @@ async function fetchLikeStatus() {
   }
 }
 
-// 게시글 상태(조회수) 가져오기
+// 종주 기록 상태(조회수) 가져오기
 async function fetchPostStatus() {
   try {
     const { error, result } = await get(
@@ -116,7 +116,7 @@ async function fetchPostStatus() {
     );
 
     if (error) {
-      console.error('게시글 상태 조회 실패:', error);
+      console.error('종주 기록 상태 조회 실패:', error);
       return;
     }
 
@@ -124,11 +124,11 @@ async function fetchPostStatus() {
     const viewCount = result.data.viewCount || 0;
     document.getElementById('postViews').textContent = viewCount;
   } catch (error) {
-    console.error('게시글 상태 조회 중 오류:', error);
+    console.error('종주 기록 상태 조회 중 오류:', error);
   }
 }
 
-// 게시글 렌더링
+// 종주 기록 렌더링
 function renderPost(post) {
   document.getElementById('postTitle').textContent = post.title;
   document.getElementById('postAuthor').textContent = post.nickname || post.author || '익명';
@@ -355,16 +355,16 @@ async function handleLike() {
   }
 }
 
-// 게시글 수정
+// 종주 기록 수정
 function handleEdit() {
   window.location.href = `/pages/post/postEdit.html?id=${postId}`;
 }
 
-// 게시글 삭제
+// 종주 기록 삭제
 async function handleDelete() {
   const confirmed = await window.modal.confirm(
-    '정말로 이 게시글을 삭제하시겠습니까?',
-    '게시글 삭제'
+    '정말로 이 종주 기록을 삭제하시겠습니까?',
+    '종주 기록 삭제'
   );
 
   if (!confirmed) return;
@@ -376,11 +376,11 @@ async function handleDelete() {
   );
 
   if (error) {
-    await window.modal.alert('게시글 삭제에 실패했습니다.', '오류');
+    await window.modal.alert('종주 기록 삭제에 실패했습니다.', '오류');
     return;
   }
 
-  await window.modal.alert('게시글이 삭제되었습니다.', '완료');
+  await window.modal.alert('종주 기록이 삭제되었습니다.', '완료');
   window.location.href = '/pages/post/post.html';
 }
 
