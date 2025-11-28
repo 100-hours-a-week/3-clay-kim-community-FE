@@ -19,8 +19,17 @@ class Layout {
       headerPlaceholder.innerHTML = `
         <header class="header">
           <div class="header-container">
-            <a href="/" class="header-logo">🚴‍♂️ 종주 메이트</a>
-            <div class="header-user" id="headerUser"></div>
+            <div class="header-top">
+              <a href="/" class="header-logo">🚴‍♂️ 종주 메이트</a>
+              <div class="header-user" id="headerUser"></div>
+            </div>
+            <nav class="header-nav-tabs">
+              <a href="/"> 홈</a>
+              <a href="/pages/post/post.html"> 전체 종주기록</a>
+              <a href="/pages/post/post.html?period=daily">오늘의 국토종주 기록</a>
+              <a href="/pages/post/post.html?period=weekly">인기 국토종주 코스</a>
+              <a href="/pages/post/post.html?view=top10"> 완주 인증 TOP 10</a>
+            </nav>
           </div>
         </header>
       `;
@@ -45,16 +54,16 @@ class Layout {
             <h3 class="sidebar-title">📌 메뉴</h3>
             <ul>
               <li><a href="/"><span class="sidebar-icon">🏠</span>홈</a></li>
-              <li><a href="/pages/post/post.html"><span class="sidebar-icon">🚴</span>전체 종주기록</a></li>
+              <li><a href="/pages/post/post.html"><span class="sidebar-icon">🚴</span>전체 국토종주 기록</a></li>
             </ul>
           </div>
 
           <div class="sidebar-section">
             <h3 class="sidebar-title">🏃 종주 일지</h3>
             <ul>
-              <li><a href="/pages/post/post.html?period=daily"><span class="sidebar-icon">🧭</span>오늘의 종주기록</a></li>
-              <li><a href="/pages/post/post.html?period=weekly"><span class="sidebar-icon">🗺️</span>인기 종주 코스</a></li>
-              <li><a href="/pages/post/post.html?view=top10"><span class="sidebar-icon">🔥</span>완주 인증 TOP 10</a></li>
+              <li><a href="/pages/post/post.html?period=daily"><span class="sidebar-icon"></span>오늘의 국토종주 기록</a></li>
+              <li><a href="/pages/post/post.html?period=weekly"><span class="sidebar-icon"></span>인기 국토종주 코스</a></li>
+              <li><a href="/pages/post/post.html?view=top10"><span class="sidebar-icon"></span>완주 인증 TOP 10</a></li>
             </ul>
           </div>
         </aside>
@@ -161,13 +170,13 @@ class Layout {
   }
 
   /**
-   * 현재 페이지에 맞는 사이드바 메뉴 활성화
+   * 현재 페이지에 맞는 탭 메뉴 활성화
    */
   setActiveSidebar() {
     const currentPath = window.location.pathname + window.location.search;
-    const sidebarLinks = document.querySelectorAll(".sidebar a");
+    const navLinks = document.querySelectorAll(".header-nav-tabs a");
 
-    sidebarLinks.forEach((link) => {
+    navLinks.forEach((link) => {
       const linkHref = link.getAttribute("href");
       if (linkHref === currentPath) {
         link.classList.add("active");

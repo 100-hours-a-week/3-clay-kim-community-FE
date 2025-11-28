@@ -37,11 +37,11 @@ function updatePageHeader() {
 
   const headerConfig = {
     daily: {
-      title: '🧭 오늘의 종주기록',
-      description: '오늘 올라온 종주기록을 확인하세요!'
+      title: '🧭 오늘의 국토종주 기록',
+      description: '오늘 올라온 국토종주 기록을 확인하세요!'
     },
     weekly: {
-      title: '🗺️ 인기 종주 코스',
+      title: '🗺️ 인기 국토종주 코스',
       description: '이번 주 인기있는 종주 코스를 확인하세요!'
     },
     top10: {
@@ -49,15 +49,15 @@ function updatePageHeader() {
       description: '이번 주 가장 인기있는 완주 인증 TOP 10을 확인하세요!'
     },
     myPosts: {
-      title: '📝 내 종주기록',
-      description: '내가 작성한 종주기록을 확인하세요!'
+      title: '📝 내 국토종주 기록',
+      description: '내가 작성한 국토종주 기록을 확인하세요!'
     }
   };
 
   const key = filter || view || period;
   const config = headerConfig[key] || {
     title: '안녕하세요, 종주 메이트입니다.',
-    description: '종주 경험을 공유해보세요!'
+    description: '당신의 국토종주 경험을 공유해보세요!'
   };
 
   document.title = config.title.replace(/[🧭🗺️🔥📝]\s/, '') + ' | 종주 메이트';

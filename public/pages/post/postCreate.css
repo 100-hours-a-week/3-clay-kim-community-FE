@@ -1,6 +1,7 @@
 /* postCreate.css - 게시글 작성 페이지 스타일 */
 
 .post-create-container {
+  width: 100%;
   max-width: 800px;
   margin: 0 auto;
   padding: 40px 20px;
@@ -72,8 +73,8 @@
 .form-textarea:focus {
   outline: none;
   background-color: #ffffff;
-  border-color: #007bff;
-  box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.1);
+  border-color: #059669;
+  box-shadow: 0 0 0 3px rgba(5, 150, 105, 0.1);
 }
 
 .form-input::placeholder,
@@ -103,7 +104,7 @@
 }
 
 .form-help span {
-  color: #007bff;
+  color: #059669;
   font-weight: 500;
 }
 
@@ -147,15 +148,14 @@
 }
 
 .btn-submit {
-  background-color: #007bff;
+  background: linear-gradient(135deg, #059669 0%, #047857 100%);
   color: #ffffff;
-  box-shadow: 0 2px 4px rgba(0, 123, 255, 0.2);
+  box-shadow: 0 4px 12px rgba(5, 150, 105, 0.2);
 }
 
 .btn-submit:hover:not(:disabled) {
-  background-color: #0056b3;
-  box-shadow: 0 4px 8px rgba(0, 123, 255, 0.3);
-  transform: translateY(-1px);
+  box-shadow: 0 6px 20px rgba(5, 150, 105, 0.3);
+  transform: translateY(-2px);
 }
 
 .btn-submit:active:not(:disabled) {

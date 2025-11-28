@@ -11,6 +11,7 @@ body {
 }
 
 .post-container {
+  width: 100%;
   max-width: 900px;
   margin: 0 auto;
   padding: 40px 20px;
@@ -18,18 +19,22 @@ body {
 
 .post-header {
   text-align: center;
-  margin-bottom: 40px;
+  margin-bottom: 48px;
+  padding: 32px 0;
+  border-radius: 16px;
 }
 
 .post-header h1 {
-  font-size: 32px;
-  color: #333;
+  font-size: 36px;
+  color: #065f46;
   margin-bottom: 12px;
+  font-weight: 700;
 }
 
 .post-description {
-  font-size: 16px;
-  color: #666;
+  font-size: 17px;
+  color: #059669;
+  font-weight: 500;
 }
 
 .post-write-section {
@@ -38,22 +43,28 @@ body {
 }
 
 .btn-write {
-  padding: 12px 24px;
-  background-color: #007bff;
+  padding: 14px 28px;
+  background: linear-gradient(135deg, #059669 0%, #047857 100%);
   color: white;
   border: none;
-  border-radius: 8px;
+  border-radius: 12px;
   font-size: 16px;
-  font-weight: 500;
+  font-weight: 600;
   cursor: pointer;
-  transition: background-color 0.3s;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   display: inline-flex;
   align-items: center;
   gap: 8px;
+  box-shadow: 0 4px 12px rgba(5, 150, 105, 0.2);
 }
 
 .btn-write:hover {
-  background-color: #0056b3;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(5, 150, 105, 0.3);
+}
+
+.btn-write:active {
+  transform: translateY(0);
 }
 
 .btn-write span {
@@ -63,56 +74,63 @@ body {
 .post-list {
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 20px;
 }
 
 .loading {
   text-align: center;
-  padding: 60px 20px;
-  color: #666;
-  font-size: 16px;
+  padding: 80px 20px;
+  color: #059669;
+  font-size: 17px;
+  font-weight: 500;
 }
 
 .empty-state {
   text-align: center;
-  padding: 80px 20px;
-  color: #999;
+  padding: 100px 20px;
+  color: #94a3b8;
 }
 
 .empty-state-icon {
-  font-size: 48px;
-  margin-bottom: 16px;
+  font-size: 64px;
+  margin-bottom: 20px;
+  opacity: 0.5;
 }
 
 .empty-state-text {
-  font-size: 16px;
-  margin-bottom: 24px;
+  font-size: 17px;
+  margin-bottom: 28px;
+  color: #64748b;
 }
 
 .pagination {
   display: flex;
   justify-content: center;
   align-items: center;
-  gap: 8px;
-  margin-top: 40px;
+  gap: 12px;
+  margin-top: 48px;
+  padding: 24px 0;
 }
 
 .page-btn {
-  padding: 12px 32px;
-  border: 1px solid #dee2e6;
+  padding: 14px 36px;
+  border: 2px solid #d1fae5;
   background-color: white;
-  color: #333;
-  border-radius: 8px;
+  color: #059669;
+  border-radius: 12px;
   cursor: pointer;
-  transition: all 0.3s;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   font-size: 15px;
-  font-weight: 500;
+  font-weight: 600;
+  box-shadow: 0 2px 8px rgba(5, 150, 105, 0.1);
 }
 
 .page-btn:hover {
-  background-color: #007bff;
+  background: linear-gradient(135deg, #059669 0%, #047857 100%);
   color: white;
-  border-color: #007bff;
+  border-color: #059669;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(5, 150, 105, 0.2);
 }
 
 .page-btn:active {
@@ -120,8 +138,9 @@ body {
 }
 
 .page-btn:disabled {
-  opacity: 0.5;
+  opacity: 0.4;
   cursor: not-allowed;
+  transform: none;
 }
 
 /* 반응형 */
