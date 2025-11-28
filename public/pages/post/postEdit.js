@@ -1,4 +1,4 @@
-// postEdit.js - 게시글 수정 페이지
+// postEdit.js - 종주 기록 수정 페이지
 import { get, patch } from '/utils/fetchApi.js';
 import { API_ENDPOINTS } from '/utils/apiList.js';
 
@@ -42,13 +42,13 @@ async function checkLoginStatus() {
   }
 }
 
-// 기존 게시글 데이터 불러오기
+// 기존 종주 기록 데이터 불러오기
 async function loadPostData() {
   const { error, result } = await get(API_ENDPOINTS.POSTS.DETAIL(postId), { auth: true });
   
   if (error) {
-    console.error('게시글 로딩 실패:', error);
-    await window.modal.alert('게시글을 불러오는데 실패했습니다.', '오류');
+    console.error('종주 기록 로딩 실패:', error);
+    await window.modal.alert('종주 기록을 불러오는데 실패했습니다.', '오류');
     window.location.href = '/pages/post/post.html';
     return;
   }
@@ -152,8 +152,8 @@ async function handleSubmit(e) {
   try {
     await updatePost(title, content);
   } catch (error) {
-    console.error('게시글 수정 실패:', error);
-    await window.modal.alert('게시글 수정에 실패했습니다.<br>잠시 후 다시 시도해주세요.', '오류');
+    console.error('종주 기록 수정 실패:', error);
+    await window.modal.alert('종주 기록 수정에 실패했습니다.<br>잠시 후 다시 시도해주세요.', '오류');
   } finally {
     // 버튼 활성화 및 로딩 상태 해제
     btnSubmit.disabled = false;
@@ -178,7 +178,7 @@ function validateForm(title, content) {
   return true;
 }
 
-// 게시글 수정 API 호출
+// 종주 기록 수정 API 호출
 async function updatePost(title, content) {
   const { error, result } = await patch(
     API_ENDPOINTS.POSTS.UPDATE(postId),
@@ -192,13 +192,13 @@ async function updatePost(title, content) {
   if (error) {
     // 에러는 fetchApi.js에서 이미 처리되므로 (401은 자동 리다이렉트)
     // 여기서는 일반적인 에러만 처리
-    throw new Error(error.message || '게시글 수정에 실패했습니다.');
+    throw new Error(error.message || '종주 기록 수정에 실패했습니다.');
   }
 
   awayTrigger = true;
-  
+
   // 성공 메시지 표시 후 상세 페이지로 이동
-  await window.modal.alert('게시글이 수정되었습니다!', '완료');
+  await window.modal.alert('종주 기록이 수정되었습니다!', '완료');
   window.location.href = `/pages/postDetail/postDetail.html?id=${postId}`;
 }
 

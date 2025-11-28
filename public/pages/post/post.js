@@ -1,4 +1,4 @@
-// 게시글 목록 페이지 - 최종 버전
+// 종주 기록 목록 페이지 - 최종 버전
 import { renderPostCards } from '/components/postCard/postCard.js';
 import { get } from '/utils/fetchApi.js';
 import { API_ENDPOINTS } from '/utils/apiList.js';
@@ -37,30 +37,30 @@ function updatePageHeader() {
 
   const headerConfig = {
     daily: {
-      title: '⭐ 오늘 추천글',
-      description: '오늘 가장 인기있는 게시글을 확인하세요!'
+      title: '🧭 최신 종주기록',
+      description: '오늘 올라온 종주기록을 확인하세요!'
     },
     weekly: {
-      title: '🏆 이번주 추천글',
-      description: '이번 주 가장 인기있는 게시글을 확인하세요!'
+      title: '🗺️ 인기 종주 코스',
+      description: '이번 주 인기있는 종주 코스를 확인하세요!'
     },
     top10: {
-      title: '🔥 이번주 인기 TOP 10',
-      description: '이번 주 가장 인기있는 게시글 TOP 10을 확인하세요!'
+      title: '🔥 완주 인증 TOP 10',
+      description: '이번 주 가장 인기있는 완주 인증 TOP 10을 확인하세요!'
     },
     myPosts: {
-      title: '📝 내 게시글',
-      description: '내가 작성한 게시글을 확인하세요!'
+      title: '📝 내 종주기록',
+      description: '내가 작성한 종주기록을 확인하세요!'
     }
   };
 
   const key = filter || view || period;
   const config = headerConfig[key] || {
-    title: '안녕하세요, 아무 말 대잔치 게시판 입니다.',
-    description: '자유롭게 이야기를 나눠보세요!'
+    title: '안녕하세요, 종주 메이트입니다.',
+    description: '종주 경험을 공유해보세요!'
   };
 
-  document.title = config.title.replace(/[⭐🏆🔥]\s/, '') + ' | 아무 말 대잔치';
+  document.title = config.title.replace(/[🧭🗺️🔥📝]\s/, '') + ' | 종주 메이트';
 
   const headerElement = document.getElementById('postHeader');
   if (headerElement) {
@@ -71,7 +71,7 @@ function updatePageHeader() {
   }
 }
 
-// 게시글 작성 버튼 이벤트
+// 종주 기록 작성 버튼 이벤트
 function attachEventListeners() {
   const btnWrite = document.getElementById('btnWrite');
   btnWrite.addEventListener('click', async () => {
@@ -92,17 +92,17 @@ function attachEventListeners() {
   });
 }
 
-// 게시글 목록 초기화
+// 종주 기록 목록 초기화
 async function initPostList() {
   try {
     await fetchPosts();
   } catch (error) {
-    console.error('게시글 로딩 실패:', error);
+    console.error('종주 기록 로딩 실패:', error);
     renderError();
   }
 }
 
-// 게시글 목록 불러오기 (cursor 기반)
+// 종주 기록 목록 불러오기 (cursor 기반)
 async function fetchPosts(cursor = null) {
   const params = new URLSearchParams(window.location.search);
   const period = params.get('period');
@@ -115,7 +115,7 @@ async function fetchPosts(cursor = null) {
   if (view === 'top10') {
     endpoint = API_ENDPOINTS.POSTS.TOP10;
   } else if (filter === 'myPosts') {
-    // 내 게시글 필터링
+    // 내 종주 기록 필터링
     const nickname = localStorage.getItem('userNickname');
     if (!nickname) {
       throw new Error('로그인이 필요합니다.');
@@ -133,7 +133,7 @@ async function fetchPosts(cursor = null) {
   console.log('error : ', error);
 
   if (error) {
-    throw new Error('게시글을 불러오는데 실패했습니다.');
+    throw new Error('종주 기록을 불러오는데 실패했습니다.');
   }
 
   const data = result.data;
@@ -189,7 +189,7 @@ async function loadMore() {
     const { error, result } = await get(endpoint);
 
     if (error) {
-      throw new Error('게시글을 불러오는데 실패했습니다.');
+      throw new Error('종주 기록을 불러오는데 실패했습니다.');
     }
 
     currentCursor = result.data.nextCursor;
@@ -200,8 +200,8 @@ async function loadMore() {
     // 페이지네이션 버튼 업데이트
     renderPaginationAuto();
   } catch (error) {
-    console.error('게시글 로딩 실패:', error);
-    await window.modal.alert('게시글을 불러오는데 실패했습니다.', '오류');
+    console.error('종주 기록 로딩 실패:', error);
+    await window.modal.alert('종주 기록을 불러오는데 실패했습니다.', '오류');
   }  finally {
     isLoading = false; // 로딩 완료
   }
@@ -213,7 +213,7 @@ function renderError() {
   postList.innerHTML = `
     <div class="empty-state">
       <div class="empty-state-icon">⚠️</div>
-      <div class="empty-state-text">게시글을 불러오는데 실패했습니다.</div>
+      <div class="empty-state-text">종주 기록을 불러오는데 실패했습니다.</div>
       <button class="btn-write" onclick="location.reload()">
         다시 시도
       </button>
