@@ -37,7 +37,7 @@ function updatePageHeader() {
 
   const headerConfig = {
     daily: {
-      title: '🧭 최신 종주기록',
+      title: '🧭 오늘의 종주기록',
       description: '오늘 올라온 종주기록을 확인하세요!'
     },
     weekly: {

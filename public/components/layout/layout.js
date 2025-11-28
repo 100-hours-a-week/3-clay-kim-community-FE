@@ -52,7 +52,7 @@ class Layout {
           <div class="sidebar-section">
             <h3 class="sidebar-title">🏃 종주 일지</h3>
             <ul>
-              <li><a href="/pages/post/post.html?period=daily"><span class="sidebar-icon">🧭</span>최신 종주기록</a></li>
+              <li><a href="/pages/post/post.html?period=daily"><span class="sidebar-icon">🧭</span>오늘의 종주기록</a></li>
               <li><a href="/pages/post/post.html?period=weekly"><span class="sidebar-icon">🗺️</span>인기 종주 코스</a></li>
               <li><a href="/pages/post/post.html?view=top10"><span class="sidebar-icon">🔥</span>완주 인증 TOP 10</a></li>
             </ul>
@@ -164,11 +164,12 @@ class Layout {
    * 현재 페이지에 맞는 사이드바 메뉴 활성화
    */
   setActiveSidebar() {
-    const currentPath = window.location.pathname;
+    const currentPath = window.location.pathname + window.location.search;
     const sidebarLinks = document.querySelectorAll(".sidebar a");
 
     sidebarLinks.forEach((link) => {
-      if (link.getAttribute("href") === currentPath) {
+      const linkHref = link.getAttribute("href");
+      if (linkHref === currentPath) {
         link.classList.add("active");
       }
     });
