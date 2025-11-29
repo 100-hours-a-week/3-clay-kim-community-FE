@@ -240,27 +240,34 @@
 
         /* Hero Section */
         .hero {
-            background: linear-gradient(135deg, #e8f5e9 0%, #c8e6c9 100%);
-            padding: 5rem 2rem;
+            background:
+                linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.4)),
+                url('/images/hero-bike.jpg') center/cover no-repeat;
+            padding: 8rem 2rem;
             text-align: center;
+            position: relative;
         }
 
         .hero-content {
             max-width: 800px;
             margin: 0 auto;
+            position: relative;
+            z-index: 1;
         }
 
         .hero h1 {
             font-size: 3rem;
-            color: #2d5a3d;
+            color: #ffffff;
             margin-bottom: 1rem;
             font-weight: 800;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
         }
 
         .hero p {
             font-size: 1.3rem;
-            color: #555;
+            color: #ffffff;
             margin-bottom: 2rem;
+            text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.3);
         }
 
         .hero-buttons {
