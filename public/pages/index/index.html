@@ -19,18 +19,11 @@
 
         /* Header */
         header {
-            width: 100%;
-            background-color: #059669;
-            background-image:
-                url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1400 90' preserveAspectRatio='none'%3E%3Cpath d='M0 90 L0 50 Q150 30 300 50 Q450 70 600 50 Q750 30 900 50 Q1050 70 1200 50 Q1275 40 1400 50 L1400 90 Z' fill='rgba(0,0,0,0.1)'/%3E%3Cpath d='M0 90 L0 60 Q175 45 350 60 Q525 75 700 60 Q875 45 1050 60 Q1225 75 1400 60 L1400 90 Z' fill='rgba(0,0,0,0.1)'/%3E%3C/svg%3E"),
-                linear-gradient(135deg, #10b981 0%, #81c784 120%);
-            background-size: 100% 100%, cover;
-            background-position: center bottom, center;
-            background-repeat: no-repeat;
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            background: white;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
             position: sticky;
             top: 0;
-            z-index: 1000;
+            z-index: 100;
         }
 
         nav {
@@ -45,16 +38,11 @@
         .logo {
             font-size: 1.5rem;
             font-weight: 700;
-            color: #ffffff;
+            color: #2d5a3d;
             display: flex;
             align-items: center;
             gap: 0.5rem;
             text-decoration: none;
-            transition: transform 0.2s ease;
-        }
-
-        .logo:hover {
-            transform: scale(1.05);
         }
 
         .nav-links {
@@ -65,32 +53,26 @@
 
         .nav-links > a {
             text-decoration: none;
-            color: rgba(255, 255, 255, 0.9);
+            color: #666;
             font-weight: 500;
-            transition: all 0.3s ease;
-            padding: 8px 16px;
-            border-radius: 6px;
+            transition: color 0.2s;
         }
 
         .nav-links > a:hover {
-            background-color: rgba(255, 255, 255, 0.2);
-            color: #ffffff;
+            color: #2d5a3d;
         }
 
         .btn-login {
-            background: #ffffff;
-            color: #047857;
+            background: #2d5a3d;
+            color: white;
             padding: 0.5rem 1.5rem;
             border-radius: 8px;
             text-decoration: none;
-            transition: all 0.3s ease;
-            font-weight: 600;
+            transition: background 0.2s;
         }
 
         .btn-login:hover {
-            background: #f0f0f0;
-            transform: translateY(-2px);
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+            background: #234a2f;
         }
 
         /* Header User Info */
@@ -110,18 +92,18 @@
             align-items: center;
             gap: 8px;
             padding: 8px 16px;
-            background-color: rgba(255, 255, 255, 0.15);
+            background-color: rgba(45, 90, 61, 0.1);
             border-radius: 20px;
             cursor: pointer;
             transition: all 0.3s ease;
         }
 
         .header-user-info:hover {
-            background-color: rgba(255, 255, 255, 0.25);
+            background-color: rgba(45, 90, 61, 0.2);
         }
 
         .header-user-email {
-            color: #ffffff;
+            color: #2d5a3d;
             font-size: 14px;
             font-weight: 500;
         }
@@ -191,9 +173,9 @@
         }
 
         .btn-logout {
-            background-color: rgba(255, 255, 255, 0.2);
-            color: #ffffff;
-            border: 1px solid rgba(255, 255, 255, 0.3);
+            background-color: rgba(45, 90, 61, 0.1);
+            color: #2d5a3d;
+            border: 1px solid rgba(45, 90, 61, 0.3);
             padding: 0.5rem 1.5rem;
             border-radius: 8px;
             cursor: pointer;
@@ -202,40 +184,38 @@
         }
 
         .btn-logout:hover {
-            background-color: rgba(255, 255, 255, 0.3);
+            background-color: rgba(45, 90, 61, 0.2);
             transform: translateY(-1px);
         }
 
         .btn-register {
-            background: #ffffff;
-            color: #047857;
+            background: #2d5a3d;
+            color: white;
             padding: 0.5rem 1.5rem;
             border-radius: 8px;
             text-decoration: none;
-            transition: all 0.3s ease;
-            font-weight: 600;
+            transition: background 0.2s;
+            font-weight: 500;
         }
 
         .btn-register:hover {
-            background: #f0f0f0;
-            transform: translateY(-2px);
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+            background: #234a2f;
         }
 
         .btn-login-secondary {
             background: transparent;
-            color: #ffffff;
+            color: #2d5a3d;
             padding: 0.5rem 1.5rem;
             border-radius: 8px;
             text-decoration: none;
-            border: 2px solid rgba(255, 255, 255, 0.5);
-            transition: all 0.3s ease;
+            border: 2px solid rgba(45, 90, 61, 0.3);
+            transition: all 0.2s;
             font-weight: 500;
         }
 
         .btn-login-secondary:hover {
-            background: rgba(255, 255, 255, 0.1);
-            border-color: #ffffff;
+            background: rgba(45, 90, 61, 0.1);
+            border-color: #2d5a3d;
         }
 
         /* Hero Section */
@@ -278,20 +258,20 @@
         }
 
         .btn-primary {
-            background: #2d5a3d;
-            color: white;
+            background: white;
+            color: #2d5a3d;
             padding: 1rem 2.5rem;
             border-radius: 12px;
             text-decoration: none;
             font-weight: 600;
             font-size: 1.1rem;
-            transition: transform 0.2s, box-shadow 0.2s;
-            box-shadow: 0 4px 12px rgba(45, 90, 61, 0.3);
+            border: 3px solid #2d5a3d;
+            transition: all 0.2s;
         }
 
         .btn-primary:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 16px rgba(45, 90, 61, 0.4);
+            background: #2d5a3d;
+            color: white;
         }
 
         .btn-secondary {
@@ -302,7 +282,7 @@
             text-decoration: none;
             font-weight: 600;
             font-size: 1.1rem;
-            border: 2px solid #2d5a3d;
+            border: 3px solid #2d5a3d;
             transition: all 0.2s;
         }
 
