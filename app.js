@@ -8,7 +8,7 @@ app.use(express.static(path.join(__dirname, "public")));
 
 // 루트 요청 → index.html 열기
 app.get("/", (req, res) => {
-  res.sendFile(path.join(__dirname, "public/pages/post/post.html"));
+  res.sendFile(path.join(__dirname, "public/pages/index/index.html"));
 });
 
 http://localhost:3000/health

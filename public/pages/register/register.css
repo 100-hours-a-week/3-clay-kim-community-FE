@@ -110,7 +110,7 @@ body {
 }
 .divider::before { left: -90px; }
 .divider::after { right: -90px; }
-
+81c784
 /* 폼 */
 .register-form {
   display: flex;

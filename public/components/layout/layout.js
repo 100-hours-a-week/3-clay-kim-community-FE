@@ -24,11 +24,10 @@ class Layout {
               <div class="header-user" id="headerUser"></div>
             </div>
             <nav class="header-nav-tabs">
-              <a href="/"> 홈</a>
-              <a href="/pages/post/post.html"> 전체 종주기록</a>
-              <a href="/pages/post/post.html?period=daily">오늘의 국토종주 기록</a>
-              <a href="/pages/post/post.html?period=weekly">인기 국토종주 코스</a>
-              <a href="/pages/post/post.html?view=top10"> 완주 인증 TOP 10</a>
+              <a href="/">🏠 홈</a>
+              <a href="/pages/post/post.html">🚴 종주기록</a>
+              <a href="/pages/post/post.html?period=weekly">🧭 인증 코스</a>
+              <a href="/pages/post/post.html?view=top10">🔥 완주 인증 TOP 10</a>
             </nav>
           </div>
         </header>
