@@ -56,7 +56,7 @@ function updatePageHeader() {
 
   const key = filter || view || period;
   const config = headerConfig[key] || {
-    title: '안녕하세요, 종주 메이트입니다.',
+    title: '함께 걷는 우리의 이야기, 종주 메이트입니다.',
     description: '당신의 국토종주 경험을 공유해보세요!'
   };
 

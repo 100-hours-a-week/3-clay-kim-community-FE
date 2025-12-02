@@ -18,18 +18,15 @@ class Layout {
     if (headerPlaceholder) {
       headerPlaceholder.innerHTML = `
         <header class="header">
-          <div class="header-container">
-            <div class="header-top">
-              <a href="/" class="header-logo">🚴‍♂️ 종주 메이트</a>
+          <nav class="header-nav">
+            <a href="/" class="header-logo">🚴‍♂️ 종주메이트</a>
+            <div class="header-nav-links">
+              <a href="/pages/post/post.html">종주기록</a>
+              <a href="/pages/post/post.html?period=weekly">인증 코스</a>
+              <a href="/pages/post/post.html?view=top10">완주 인증 TOP 10</a>
               <div class="header-user" id="headerUser"></div>
             </div>
-            <nav class="header-nav-tabs">
-              <a href="/">🏠 홈</a>
-              <a href="/pages/post/post.html">🚴 종주기록</a>
-              <a href="/pages/post/post.html?period=weekly">🧭 인증 코스</a>
-              <a href="/pages/post/post.html?view=top10">🔥 완주 인증 TOP 10</a>
-            </nav>
-          </div>
+          </nav>
         </header>
       `;
     }
