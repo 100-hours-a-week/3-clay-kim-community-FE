@@ -50,6 +50,11 @@ export const API_ENDPOINTS = {
     SOFT_DELETE: (commentId) => `/comments/${commentId}/deactivation`,
   },
 
+  // 이미지 관련
+  IMAGES: {
+    STATUS: '/images/status',
+  },
+
   TOS: {
     GET: '/tos',
   }

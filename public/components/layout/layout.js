@@ -21,8 +21,8 @@ class Layout {
           <nav class="header-nav">
             <a href="/" class="header-logo">🚴‍♂️ 종주메이트</a>
             <div class="header-nav-links">
-              <a href="/pages/post/post.html">종주기록</a>
-              <a href="/pages/post/post.html?period=weekly">인증 코스</a>
+              <a href="/pages/post/post.html">국토종주 기록</a>
+              <a href="/pages/post/post.html?period=weekly">주간 인기 여정</a>
               <a href="/pages/post/post.html?view=top10">완주 인증 TOP 10</a>
               <div class="header-user" id="headerUser"></div>
             </div>
