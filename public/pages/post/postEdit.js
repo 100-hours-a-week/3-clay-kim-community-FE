@@ -6,23 +6,25 @@ let awayTrigger = false;
 let postId = null;
 let originalTitle = '';
 let originalContent = '';
+let originalType = '';
 
 // 페이지 로드 시 실행
 document.addEventListener('DOMContentLoaded', () => {
   // URL에서 postId 가져오기
   const urlParams = new URLSearchParams(window.location.search);
   postId = urlParams.get('id');
-  
+
   if (!postId) {
     window.modal.alert('잘못된 접근입니다.', '오류').then(() => {
       window.location.href = '/pages/post/post.html';
     });
     return;
   }
-  
+
   checkLoginStatus();
   initFormHandlers();
   initCharacterCount();
+  initTypeSelector();
   loadPostData();
 });
 
@@ -66,11 +68,31 @@ async function loadPostData() {
   // 폼에 데이터 채우기
   document.getElementById('postTitle').value = post.title;
   document.getElementById('postContent').value = post.content;
-  
+
+  // 타입 설정 (API는 postType으로 응답)
+  const postType = post.postType || 'IN_PROGRESS';
+  // HTML value는 소문자_언더스코어 형식 (in_progress, completed)
+  const formTypeValue = postType === 'COMPLETED' ? 'completed' : 'in_progress';
+  document.getElementById('postType').value = formTypeValue;
+
+  // 타입 버튼 텍스트 업데이트
+  const typeText = postType === 'COMPLETED' ? '국토종주 완료' : '국토종주 준비 & 진행';
+  document.getElementById('typeSelectorText').textContent = typeText;
+
+  // 드롭다운 active 상태 업데이트
+  document.querySelectorAll('.type-dropdown-item').forEach(item => {
+    if (item.dataset.value === formTypeValue) {
+      item.classList.add('active');
+    } else {
+      item.classList.remove('active');
+    }
+  });
+
   // 원본 데이터 저장 (변경 감지용)
   originalTitle = post.title;
   originalContent = post.content;
-  
+  originalType = formTypeValue;
+
   // 글자 수 초기화
   document.getElementById('titleCount').textContent = post.title.length;
   document.getElementById('contentCount').textContent = post.content.length;
@@ -86,6 +108,38 @@ function initFormHandlers() {
 
   // 취소 버튼 이벤트
   btnCancel.addEventListener('click', handleCancel);
+}
+
+// 타입 선택기 초기화
+function initTypeSelector() {
+  const dropdownItems = document.querySelectorAll('.type-dropdown-item');
+  const typeSelectorText = document.getElementById('typeSelectorText');
+  const postTypeInput = document.getElementById('postType');
+
+  // 드롭다운 아이템 클릭 이벤트
+  dropdownItems.forEach(item => {
+    item.addEventListener('click', (e) => {
+      const value = item.dataset.value;
+      const text = item.textContent.trim();
+
+      // hidden input 값 업데이트
+      postTypeInput.value = value;
+
+      // 버튼 텍스트 업데이트
+      typeSelectorText.textContent = text;
+
+      // active 클래스 업데이트
+      dropdownItems.forEach(el => el.classList.remove('active'));
+      item.classList.add('active');
+
+      // 드롭다운 닫기 (호버 상태 제거)
+      const wrapper = document.querySelector('.type-selector-wrapper');
+      wrapper.style.pointerEvents = 'none';
+      setTimeout(() => {
+        wrapper.style.pointerEvents = 'auto';
+      }, 100);
+    });
+  });
 }
 
 // 글자 수 카운터 초기화
@@ -131,17 +185,18 @@ async function handleSubmit(e) {
   e.preventDefault();
 
   const title = document.getElementById('postTitle').value.trim();
+  const type = document.getElementById('postType').value;
   const content = document.getElementById('postContent').value.trim();
   const btnSubmit = document.getElementById('btnSubmit');
 
   // 변경 사항이 없는지 확인
-  if (title === originalTitle && content === originalContent) {
+  if (title === originalTitle && content === originalContent && type === originalType) {
     await window.modal.alert('변경된 내용이 없습니다.', '알림');
     return;
   }
 
   // 유효성 검사
-  if (!validateForm(title, content)) {
+  if (!validateForm(title, type, content)) {
     return;
   }
 
@@ -150,7 +205,7 @@ async function handleSubmit(e) {
   btnSubmit.classList.add('loading');
 
   try {
-    await updatePost(title, content);
+    await updatePost(title, type, content);
   } catch (error) {
     console.error('종주 기록 수정 실패:', error);
     await window.modal.alert('종주 기록 수정에 실패했습니다.<br>잠시 후 다시 시도해주세요.', '오류');
@@ -162,10 +217,15 @@ async function handleSubmit(e) {
 }
 
 // 유효성 검사
-function validateForm(title, content) {
+function validateForm(title, type, content) {
   if (title.length > 26) {
     window.modal.alert('제목은 최대 26자까지 입력 가능합니다.', '입력 오류');
     document.getElementById('postTitle').focus();
+    return false;
+  }
+
+  if (!type) {
+    window.modal.alert('타입을 선택해주세요.', '입력 오류');
     return false;
   }
 
@@ -179,11 +239,12 @@ function validateForm(title, content) {
 }
 
 // 종주 기록 수정 API 호출
-async function updatePost(title, content) {
+async function updatePost(title, type, content) {
   const { error, result } = await patch(
     API_ENDPOINTS.POSTS.UPDATE(postId),
     {
       title: title,
+      type: type,
       content: content
     },
     { auth: true }
@@ -205,15 +266,16 @@ async function updatePost(title, content) {
 // 취소 버튼 처리
 async function handleCancel() {
   const title = document.getElementById('postTitle').value.trim();
+  const type = document.getElementById('postType').value;
   const content = document.getElementById('postContent').value.trim();
 
   // 변경 사항이 있으면 확인
-  if (title !== originalTitle || content !== originalContent) {
+  if (title !== originalTitle || content !== originalContent || type !== originalType) {
     const confirmed = await window.modal.confirm(
       '수정 중인 내용이 있습니다.<br>정말 취소하시겠습니까?',
       '수정 취소'
     );
-    
+
     if (confirmed) {
       awayTrigger = true;
     } else {
@@ -228,6 +290,7 @@ async function handleCancel() {
 // 페이지 이탈 시 경고 (수정 중인 내용이 있을 때)
 window.addEventListener('beforeunload', (e) => {
   const title = document.getElementById('postTitle').value.trim();
+  const type = document.getElementById('postType').value;
   const content = document.getElementById('postContent').value.trim();
 
   if (awayTrigger) {
@@ -235,7 +298,7 @@ window.addEventListener('beforeunload', (e) => {
   }
 
   // 변경 사항이 있을 때만 경고
-  if (title !== originalTitle || content !== originalContent) {
+  if (title !== originalTitle || content !== originalContent || type !== originalType) {
     e.preventDefault();
     e.returnValue = '';
   }

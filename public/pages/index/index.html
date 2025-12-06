@@ -1,22 +1,764 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-  <link rel="stylesheet" href="/components/layout/layout.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🚴‍♂️ 종주메이트 - 함께 걷는 우리의 이야기</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans KR', sans-serif;
+            color: #333;
+            line-height: 1.6;
+        }
+
+        /* Header */
+        header {
+            background: white;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        nav {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 1.5rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #2d5a3d;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            text-decoration: none;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+            align-items: center;
+        }
+
+        .nav-links > a {
+            text-decoration: none;
+            color: #666;
+            font-weight: 500;
+            transition: color 0.2s;
+        }
+
+        .nav-links > a:hover {
+            color: #2d5a3d;
+        }
+
+        .btn-login {
+            background: #2d5a3d;
+            color: white;
+            padding: 0.5rem 1.5rem;
+            border-radius: 8px;
+            text-decoration: none;
+            transition: background 0.2s;
+        }
+
+        .btn-login:hover {
+            background: #234a2f;
+        }
+
+        /* Header User Info */
+        .header-user {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+            position: relative;
+        }
+
+        .header-user-wrapper {
+            position: relative;
+        }
+
+        .header-user-info {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 16px;
+            background-color: rgba(45, 90, 61, 0.1);
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .header-user-info:hover {
+            background-color: rgba(45, 90, 61, 0.2);
+        }
+
+        .header-user-email {
+            color: #2d5a3d;
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .user-dropdown {
+            position: absolute;
+            top: calc(100% + 8px);
+            right: 0;
+            background-color: #ffffff;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            min-width: 200px;
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(-10px);
+            transition: all 0.3s ease;
+            z-index: 1001;
+        }
+
+        .header-user-wrapper:hover .user-dropdown {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+
+        .user-dropdown::before {
+            content: '';
+            position: absolute;
+            top: -6px;
+            right: 20px;
+            width: 12px;
+            height: 12px;
+            background-color: #ffffff;
+            transform: rotate(45deg);
+            box-shadow: -2px -2px 4px rgba(0, 0, 0, 0.05);
+        }
+
+        .dropdown-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 16px;
+            color: #333;
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 500;
+            transition: all 0.2s ease;
+            position: relative;
+            z-index: 1;
+        }
+
+        .dropdown-item:first-child {
+            border-radius: 8px 8px 0 0;
+        }
+
+        .dropdown-item:last-child {
+            border-radius: 0 0 8px 8px;
+        }
+
+        .dropdown-item:hover {
+            background-color: #f7fafc;
+            color: #2d5a3d;
+        }
+
+        .dropdown-icon {
+            font-size: 16px;
+        }
+
+        .btn-logout {
+            background-color: rgba(45, 90, 61, 0.1);
+            color: #2d5a3d;
+            border: 1px solid rgba(45, 90, 61, 0.3);
+            padding: 0.5rem 1.5rem;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        .btn-logout:hover {
+            background-color: rgba(45, 90, 61, 0.2);
+            transform: translateY(-1px);
+        }
+
+        .btn-register {
+            background: #2d5a3d;
+            color: white;
+            padding: 0.5rem 1.5rem;
+            border-radius: 8px;
+            text-decoration: none;
+            transition: background 0.2s;
+            font-weight: 500;
+        }
+
+        .btn-register:hover {
+            background: #234a2f;
+        }
+
+        .btn-login-secondary {
+            background: transparent;
+            color: #2d5a3d;
+            padding: 0.5rem 1.5rem;
+            border-radius: 8px;
+            text-decoration: none;
+            border: 2px solid rgba(45, 90, 61, 0.3);
+            transition: all 0.2s;
+            font-weight: 500;
+        }
+
+        .btn-login-secondary:hover {
+            background: rgba(45, 90, 61, 0.1);
+            border-color: #2d5a3d;
+        }
+
+        /* Hero Section */
+        .hero {
+            background:
+                linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.4)),
+                url('/images/hero-bike.jpg') center/cover no-repeat;
+            padding: 8rem 2rem;
+            text-align: center;
+            position: relative;
+        }
+
+        .hero-content {
+            max-width: 800px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 1;
+        }
+
+        .hero h1 {
+            font-size: 3rem;
+            color: #ffffff;
+            margin-bottom: 1rem;
+            font-weight: 800;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        .hero p {
+            font-size: 1.3rem;
+            color: #ffffff;
+            margin-bottom: 2rem;
+            text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.3);
+        }
+
+        .hero-buttons {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .btn-primary {
+            background: white;
+            color: #2d5a3d;
+            padding: 1rem 2.5rem;
+            border-radius: 12px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 1.1rem;
+            border: 3px solid #2d5a3d;
+            transition: all 0.2s;
+        }
+
+        .btn-primary:hover {
+            background: #2d5a3d;
+            color: white;
+        }
+
+        .btn-secondary {
+            background: white;
+            color: #2d5a3d;
+            padding: 1rem 2.5rem;
+            border-radius: 12px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 1.1rem;
+            border: 3px solid #2d5a3d;
+            transition: all 0.2s;
+        }
+
+        .btn-secondary:hover {
+            background: #2d5a3d;
+            color: white;
+        }
+
+        /* Stats Section */
+        .stats {
+            background: white;
+            padding: 3rem 2rem;
+        }
+
+        .stats-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 2rem;
+            text-align: center;
+        }
+
+        .stat-item {
+            padding: 1.5rem;
+        }
+
+        .stat-number {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: #2d5a3d;
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-label {
+            font-size: 1rem;
+            color: #666;
+        }
+
+        /* Content Section */
+        .content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 4rem 2rem;
+        }
+
+        .section-title {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #2d5a3d;
+            margin-bottom: 2rem;
+            text-align: center;
+        }
+
+        /* Recent Posts */
+        .posts-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-bottom: 4rem;
+        }
+
+        .post-card {
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+            transition: transform 0.2s, box-shadow 0.2s;
+            cursor: pointer;
+        }
+
+        .post-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 4px 20px rgba(0,0,0,0.12);
+        }
+
+        .post-image {
+            width: 100%;
+            height: 200px;
+            background: linear-gradient(135deg, #81c784 0%, #66bb6a 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3rem;
+        }
+
+        .post-content {
+            padding: 1.5rem;
+        }
+
+        .post-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 0.5rem;
+        }
+
+        .post-excerpt {
+            color: #666;
+            font-size: 0.95rem;
+            margin-bottom: 1rem;
+        }
+
+        .post-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.85rem;
+            color: #999;
+        }
+
+        .post-author {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        /* Features */
+        .features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            margin-bottom: 4rem;
+        }
+
+        .feature-card {
+            text-align: center;
+            padding: 2rem;
+            background: #f8f9fa;
+            border-radius: 12px;
+            transition: background 0.2s;
+        }
+
+        .feature-card:hover {
+            background: #e8f5e9;
+        }
+
+        .feature-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+
+        .feature-title {
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: #2d5a3d;
+            margin-bottom: 0.5rem;
+        }
+
+        .feature-desc {
+            color: #666;
+        }
+
+        /* Footer */
+        footer {
+            background: #2d5a3d;
+            color: white;
+            padding: 3rem 2rem;
+            margin-top: 4rem;
+        }
+
+        .footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 2rem;
+        }
+
+        .footer-section h3 {
+            margin-bottom: 1rem;
+        }
+
+        .footer-section a {
+            color: #c8e6c9;
+            text-decoration: none;
+            display: block;
+            margin-bottom: 0.5rem;
+        }
+
+        .footer-section a:hover {
+            color: white;
+        }
+
+        .footer-bottom {
+            text-align: center;
+            margin-top: 2rem;
+            padding-top: 2rem;
+            border-top: 1px solid rgba(255,255,255,0.1);
+            color: #c8e6c9;
+        }
+
+        @media (max-width: 768px) {
+            .hero h1 {
+                font-size: 2rem;
+            }
+
+            .hero p {
+                font-size: 1.1rem;
+            }
+
+            .nav-links {
+                display: none;
+            }
+        }
+    </style>
 </head>
 <body>
-  <!-- placeholder divs -->
-  <div id="header-placeholder"></div>
-  <div id="sidebar-placeholder"></div>
-  
-  <main class="main-content">
-    <div id="content">
-      <h1>index.html 페이지 확인</h1>
+    <!-- Header -->
+    <header>
+        <nav>
+            <a href="/" class="logo">🚴‍♂️ 종주메이트</a>
+            <div class="nav-links">
+                <a href="/pages/post/post.html">종주기록</a>
+                <a href="/pages/post/post.html?period=weekly">인증 코스</a>
+                <a href="/pages/post/post.html?view=top10">완주 인증 TOP 10</a>
+                <div class="header-user" id="headerUser"></div>
+            </div>
+        </nav>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="hero-content">
+            <h1>함께 걷는 우리의 이야기</h1>
+            <p>국토종주의 모든 순간을 기록하고 공유하세요</p>
+            <div class="hero-buttons">
+                <a href="/pages/post/post.html" class="btn-primary">시작하기</a>
+                <a href="/pages/post/post.html?period=weekly" class="btn-secondary">국토종주 코스 찾기</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Stats -->
+    <section class="stats">
+        <div class="stats-container">
+            <div class="stat-item">
+                <div class="stat-number" id="completedCount">-</div>
+                <div class="stat-label">종주 완료자</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-number" id="inProgressCount">-</div>
+                <div class="stat-label">진행중인 도전</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-number">45,621</div>
+                <div class="stat-label">공유된 사진</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-number">89</div>
+                <div class="stat-label">인증센터</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Main Content -->
+    <div class="content">
+        <!-- Recent Posts -->
+        <h2 class="section-title">최근 종주 이야기</h2>
+        <div class="posts-grid">
+            <div class="post-card" onclick="location.href='/pages/post/post.html'">
+                <div class="post-image">🏔️</div>
+                <div class="post-content">
+                    <h3 class="post-title">한강종주 3일차 후기</h3>
+                    <p class="post-excerpt">팔당에서 여주까지, 날씨 좋은 날 라이딩하니 정말 최고였어요...</p>
+                    <div class="post-meta">
+                        <span class="post-author">
+                            <span>👤</span>
+                            <span>라이더김</span>
+                        </span>
+                        <span>좋아요 24</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="post-card" onclick="location.href='/pages/post/post.html'">
+                <div class="post-image">🚶</div>
+                <div class="post-content">
+                    <h3 class="post-title">새재길 도보 종주 완료!</h3>
+                    <p class="post-excerpt">4박 5일 만에 드디어 완주했습니다. 힘들었지만 보람차네요...</p>
+                    <div class="post-meta">
+                        <span class="post-author">
+                            <span>👤</span>
+                            <span>걷기왕</span>
+                        </span>
+                        <span>좋아요 56</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="post-card" onclick="location.href='/pages/post/post.html'">
+                <div class="post-image">🚴</div>
+                <div class="post-content">
+                    <h3 class="post-title">남파랑 길 추천 코스</h3>
+                    <p class="post-excerpt">부산에서 시작하기 좋은 코스 정보 공유합니다...</p>
+                    <div class="post-meta">
+                        <span class="post-author">
+                            <span>👤</span>
+                            <span>바다사랑</span>
+                        </span>
+                        <span>좋아요 32</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Features -->
+        <h2 class="section-title">종주메이트에서 할 수 있는 것</h2>
+        <div class="features">
+            <div class="feature-card">
+                <div class="feature-icon">📍</div>
+                <h3 class="feature-title">실시간 인증</h3>
+                <p class="feature-desc">인증센터에서 QR코드로 간편하게 인증하세요</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">📊</div>
+                <h3 class="feature-title">기록 관리</h3>
+                <p class="feature-desc">나의 종주 기록을 한눈에 확인하고 관리하세요</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">👥</div>
+                <h3 class="feature-title">동행자 찾기</h3>
+                <p class="feature-desc">함께 걸을 동행자를 찾아보세요</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">📸</div>
+                <h3 class="feature-title">추억 공유</h3>
+                <p class="feature-desc">종주 중 만난 아름다운 풍경을 공유하세요</p>
+            </div>
+        </div>
     </div>
-  </main>
 
-  <div id="footer-placeholder"></div>
+    <!-- Footer -->
+    <footer>
+        <div class="footer-content">
+            <div class="footer-section">
+                <h3>종주메이트</h3>
+                <p>국토종주를 사랑하는<br>모든 이들을 위한 공간</p>
+            </div>
+            <div class="footer-section">
+                <h3>서비스</h3>
+                <a href="/pages/post/post.html">커뮤니티</a>
+                <a href="/pages/post/post.html">인증센터</a>
+                <a href="/pages/post/post.html">코스 정보</a>
+                <a href="/pages/post/post.html">기록 관리</a>
+            </div>
+            <div class="footer-section">
+                <h3>지원</h3>
+                <a href="#">FAQ</a>
+                <a href="#">공지사항</a>
+                <a href="#">문의하기</a>
+            </div>
+            <div class="footer-section">
+                <h3>정책</h3>
+                <a href="#">이용약관</a>
+                <a href="/pages/privacyPolicy/privacyPolicy.html">개인정보처리방침</a>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2025 jongju.cloud. All rights reserved.</p>
+        </div>
+    </footer>
 
-  <!-- layout.js가 자동으로 placeholder를 채워줌 -->
-  <script type="module" src="/components/layout/layout.js"></script>
+    <script type="module">
+        import { get, post } from '/utils/fetchApi.js';
+        import { API_ENDPOINTS } from '/utils/apiList.js';
+
+        class IndexHeader {
+            constructor() {
+                this.userEmail = localStorage.getItem("userEmail");
+                this.userNickname = localStorage.getItem("userNickname");
+                this.renderHeader();
+                this.attachEventListeners();
+            }
+
+            isLoggedIn() {
+                return !!this.userEmail;
+            }
+
+            renderHeader() {
+                const headerUser = document.getElementById("headerUser");
+                if (!headerUser) return;
+
+                headerUser.innerHTML = this.isLoggedIn()
+                    ? this.renderLoggedIn()
+                    : this.renderLoggedOut();
+            }
+
+            renderLoggedIn() {
+                return `
+                    <div class="header-user-wrapper">
+                        <div class="header-user-info">
+                            <span class="header-user-email">${this.userNickname || "닉네임"} / ${this.userEmail || "접속 아이디"}</span>
+                        </div>
+                        <div class="user-dropdown">
+                            <a href="/pages/myProfile/myProfile.html" class="dropdown-item">
+                                <span class="dropdown-icon">👤</span>
+                                <span>내 프로필</span>
+                            </a>
+                            <a href="/pages/post/post.html?filter=myPosts" class="dropdown-item">
+                                <span class="dropdown-icon">📝</span>
+                                <span>내 게시글</span>
+                            </a>
+                            <a href="/pages/myComments/myComments.html" class="dropdown-item">
+                                <span class="dropdown-icon">💬</span>
+                                <span>내 댓글</span>
+                            </a>
+                        </div>
+                    </div>
+                    <button class="btn-logout" id="logoutBtn">로그아웃</button>
+                `;
+            }
+
+            renderLoggedOut() {
+                return `
+                    <a href="/pages/login/login.html" class="btn-login-secondary">로그인</a>
+                    <a href="/pages/register/register.html" class="btn-register">회원가입</a>
+                `;
+            }
+
+            attachEventListeners() {
+                document.addEventListener("click", (e) => {
+                    if (e.target.id === "logoutBtn") this.handleLogout();
+                });
+            }
+
+            async handleLogout() {
+                try {
+                    const { error, result } = await post(API_ENDPOINTS.AUTH.LOGOUT);
+
+                    if (error) {
+                        console.error('로그아웃 API 실패:', error);
+                    }
+                } catch (e) {
+                    console.error('로그아웃 요청 중 에러:', e);
+                } finally {
+                    localStorage.removeItem("userEmail");
+                    localStorage.removeItem("userNickname");
+                    localStorage.removeItem("userId");
+                    window.location.href = "/";
+                }
+            }
+        }
+
+        // 게시글 타입별 카운트 조회
+        async function fetchPostTypeCounts() {
+            try {
+                // 완료된 게시글 수 조회
+                const { error: completedError, result: completedResult } = await get(
+                    API_ENDPOINTS.POSTS.TYPE_COUNT('completed')
+                );
+
+                if (!completedError && completedResult?.data?.postTypeCount !== undefined) {
+                    document.getElementById('completedCount').textContent =
+                        completedResult.data.postTypeCount.toLocaleString();
+                }
+
+                // 진행중인 게시글 수 조회
+                const { error: inProgressError, result: inProgressResult } = await get(
+                    API_ENDPOINTS.POSTS.TYPE_COUNT('in_progress')
+                );
+
+                if (!inProgressError && inProgressResult?.data?.postTypeCount !== undefined) {
+                    document.getElementById('inProgressCount').textContent =
+                        inProgressResult.data.postTypeCount.toLocaleString();
+                }
+            } catch (error) {
+                console.error('게시글 타입별 카운트 조회 실패:', error);
+            }
+        }
+
+        // 페이지 로드 시 초기화
+        document.addEventListener("DOMContentLoaded", () => {
+            new IndexHeader();
+            fetchPostTypeCounts();
+        });
+    </script>
 </body>
 </html>
