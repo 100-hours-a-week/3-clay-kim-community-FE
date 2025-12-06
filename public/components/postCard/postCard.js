@@ -11,10 +11,19 @@ function createPostCard(post) {
        <span class="post-author-profile-fallback" style="display:none;">👤</span>`
     : `<span class="post-author-profile-fallback">👤</span>`;
 
+  // postType 텍스트 생성
+  let postTypeText = '';
+  if (post.postType === 'IN_PROGRESS') {
+    postTypeText = '[국토종주 준비 & 진행]';
+  } else if (post.postType === 'COMPLETED') {
+    postTypeText = '[국토종주 완료]';
+  }
+
   return `
     <div class="post-item" data-post-id="${post.id}">
       <div class="post-item-header">
         <div>
+          ${postTypeText ? `<div class="post-item-type">${postTypeText}</div>` : ''}
           <div class="post-item-title">${escapeHtml(post.title)}</div>
           <div class="post-item-author">
             ${profileImageHtml}

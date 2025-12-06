@@ -25,6 +25,131 @@
   margin: 0;
 }
 
+/* 타입 선택 섹션 */
+.form-type-section {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 32px;
+  padding-bottom: 20px;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+.type-label {
+  font-size: 14px;
+  font-weight: 600;
+  color: #666;
+}
+
+/* 타입 선택기 드롭다운 */
+.type-selector-wrapper {
+  position: relative;
+}
+
+.type-selector-button {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 16px;
+  background: linear-gradient(135deg, #059669 0%, #047857 100%);
+  color: white;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 8px rgba(5, 150, 105, 0.2);
+  min-width: 200px;
+  user-select: none;
+}
+
+.type-selector-button:hover {
+  box-shadow: 0 4px 12px rgba(5, 150, 105, 0.3);
+  transform: translateY(-2px);
+}
+
+.type-selector-icon {
+  font-size: 18px;
+}
+
+.type-selector-text {
+  flex: 1;
+  font-size: 14px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.type-selector-arrow {
+  font-size: 10px;
+  transition: transform 0.3s ease;
+}
+
+.type-selector-wrapper:hover .type-selector-arrow {
+  transform: rotate(180deg);
+}
+
+/* 드롭다운 메뉴 */
+.type-dropdown {
+  position: absolute;
+  top: calc(100% + 8px);
+  right: 0;
+  background-color: #ffffff;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  min-width: 220px;
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(-10px);
+  transition: all 0.3s ease;
+  z-index: 1001;
+  overflow: hidden;
+}
+
+.type-selector-wrapper:hover .type-dropdown {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+}
+
+.type-dropdown::before {
+  content: '';
+  position: absolute;
+  top: -6px;
+  right: 20px;
+  width: 12px;
+  height: 12px;
+  background-color: #ffffff;
+  transform: rotate(45deg);
+  box-shadow: -2px -2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.type-dropdown-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 16px;
+  color: #333;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  position: relative;
+  z-index: 1;
+}
+
+.type-dropdown-item:hover {
+  background-color: rgba(5, 150, 105, 0.1);
+  color: #059669;
+}
+
+.type-dropdown-item.active {
+  background-color: rgba(5, 150, 105, 0.15);
+  color: #059669;
+}
+
+.type-icon {
+  font-size: 16px;
+}
+
 /* 폼 스타일 */
 .post-create-form {
   background-color: #ffffff;
@@ -56,6 +181,7 @@
 
 /* 입력 필드 공통 스타일 */
 .form-input,
+.form-select,
 .form-textarea {
   width: 100%;
   padding: 14px 16px;
@@ -70,6 +196,7 @@
 }
 
 .form-input:focus,
+.form-select:focus,
 .form-textarea:focus {
   outline: none;
   background-color: #ffffff;
@@ -80,6 +207,21 @@
 .form-input::placeholder,
 .form-textarea::placeholder {
   color: #999;
+}
+
+/* 셀렉트 박스 */
+.form-select {
+  height: 50px;
+  cursor: pointer;
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg width='12' height='8' viewBox='0 0 12 8' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1.5L6 6.5L11 1.5' stroke='%23666' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 16px center;
+  padding-right: 44px;
+}
+
+.form-select option {
+  padding: 10px;
 }
 
 /* 제목 입력 */
@@ -223,6 +365,16 @@
 
   .post-create-description {
     font-size: 14px;
+  }
+
+  .form-type-section {
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 8px;
+  }
+
+  .type-selector-button {
+    min-width: 180px;
   }
 
   .post-create-form {

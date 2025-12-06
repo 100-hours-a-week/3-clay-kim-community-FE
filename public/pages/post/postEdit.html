@@ -20,15 +20,37 @@
             </div>
 
             <form class="post-create-form" id="postCreateForm">
+                <!-- 타입 선택 드롭다운 -->
+                <div class="form-type-section">
+                    <span class="type-label">게시글 타입</span>
+                    <div class="type-selector-wrapper">
+                        <div class="type-selector-button" id="typeSelectorButton">
+                            <span class="type-selector-text" id="typeSelectorText">국토종주 준비 & 진행</span>
+                            <span class="type-selector-arrow">▼</span>
+                        </div>
+                        <div class="type-dropdown" id="typeDropdown">
+                            <div class="type-dropdown-item" data-value="in_progress">
+                                국토종주 준비 & 진행
+                            </div>
+                            <div class="type-dropdown-item" data-value="completed">
+                                국토종주 완료
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 숨겨진 타입 입력 -->
+                <input type="hidden" id="postType" value="in_progress" required />
+
                 <!-- 제목 입력 -->
                 <div class="form-group">
                     <label for="postTitle" class="form-label">
                         제목 <span class="required">*</span>
                     </label>
-                    <input 
-                        type="text" 
-                        id="postTitle" 
-                        class="form-input" 
+                    <input
+                        type="text"
+                        id="postTitle"
+                        class="form-input"
                         placeholder="제목을 입력하세요 (최대 26자)"
                         maxlength="26"
                         required

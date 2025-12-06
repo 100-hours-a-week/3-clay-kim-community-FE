@@ -39,6 +39,7 @@ export const API_ENDPOINTS = {
     STATUSES: (id) => `/posts/${id}/statuses`,
     TOGGLE_LIKE: (postId) => `/posts/${postId}/likes`,
     GET_LIKE_STATUS: (postId) => `/posts/${postId}/likes`,
+    TYPE_COUNT: (type) => `/posts/type?type=${type}`,
   },
   
   // 댓글 관련

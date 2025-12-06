@@ -1,15 +1,15 @@
 // postCreate.js - 종주 기록 작성 페이지
 
-import { post } from '../../utils/fetchApi.js';
+import { get, post } from '../../utils/fetchApi.js';
 import { API_ENDPOINTS } from '../../utils/apiList.js';
 
 let awayTrigger = false;
 
 // 페이지 로드 시 실행
 document.addEventListener('DOMContentLoaded', () => {
-  checkLoginStatus();
   initFormHandlers();
   initCharacterCount();
+  initTypeSelector();
 });
 
 // 로그인 상태 체크
@@ -38,6 +38,46 @@ function initFormHandlers() {
 
   // 취소 버튼 이벤트
   btnCancel.addEventListener('click', handleCancel);
+}
+
+// 타입 선택기 초기화
+function initTypeSelector() {
+  const dropdownItems = document.querySelectorAll('.type-dropdown-item');
+  const typeSelectorText = document.getElementById('typeSelectorText');
+  const postTypeInput = document.getElementById('postType');
+
+  // 초기 active 상태 설정
+  const currentType = postTypeInput.value;
+  dropdownItems.forEach(item => {
+    if (item.dataset.value === currentType) {
+      item.classList.add('active');
+    }
+  });
+
+  // 드롭다운 아이템 클릭 이벤트
+  dropdownItems.forEach(item => {
+    item.addEventListener('click', (e) => {
+      const value = item.dataset.value;
+      const text = item.textContent.trim();
+
+      // hidden input 값 업데이트
+      postTypeInput.value = value;
+
+      // 버튼 텍스트 업데이트
+      typeSelectorText.textContent = text;
+
+      // active 클래스 업데이트
+      dropdownItems.forEach(el => el.classList.remove('active'));
+      item.classList.add('active');
+
+      // 드롭다운 닫기 (호버 상태 제거)
+      const wrapper = document.querySelector('.type-selector-wrapper');
+      wrapper.style.pointerEvents = 'none';
+      setTimeout(() => {
+        wrapper.style.pointerEvents = 'auto';
+      }, 100);
+    });
+  });
 }
 
 // 글자 수 카운터 초기화
@@ -83,11 +123,12 @@ async function handleSubmit(e) {
   e.preventDefault();
 
   const title = document.getElementById('postTitle').value.trim();
+  const type = document.getElementById('postType').value;
   const content = document.getElementById('postContent').value.trim();
   const btnSubmit = document.getElementById('btnSubmit');
 
   // 유효성 검사
-  if (!validateForm(title, content)) {
+  if (!validateForm(title, type, content)) {
     return;
   }
 
@@ -96,7 +137,7 @@ async function handleSubmit(e) {
   btnSubmit.classList.add('loading');
 
   try {
-    await createPost(title, content);
+    await createPost(title, type, content);
   } catch (error) {
     console.error('종주 기록 작성 실패:', error);
     await window.modal.alert('종주 기록 작성에 실패했습니다.<br>잠시 후 다시 시도해주세요.', '오류');
@@ -108,7 +149,7 @@ async function handleSubmit(e) {
 }
 
 // 유효성 검사
-function validateForm(title, content) {
+function validateForm(title, type, content) {
   // 제목 검사
   // if (title.length < 2) {
   //   window.modal.alert('제목은 최소 2자 이상 입력해주세요.', '입력 오류');
@@ -119,6 +160,13 @@ function validateForm(title, content) {
   if (title.length > 26) {
     window.modal.alert('제목은 최대 26자까지 입력 가능합니다.', '입력 오류');
     document.getElementById('postTitle').focus();
+    return false;
+  }
+
+  // 타입 검사
+  if (!type) {
+    window.modal.alert('타입을 선택해주세요.', '입력 오류');
+    document.getElementById('postType').focus();
     return false;
   }
 
@@ -139,9 +187,10 @@ function validateForm(title, content) {
 }
 
 // 종주 기록 작성 API 호출
-async function createPost(title, content) {
+async function createPost(title, type, content) {
   const { error, result } = await post('/posts', {
     title: title,
+    type: type,
     content: content
   }, { auth: true });
 

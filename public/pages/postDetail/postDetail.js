@@ -58,6 +58,7 @@ async function fetchPostDetail() {
   }
 
   currentPost = result.data;
+  console.log(currentPost);
   renderPost(currentPost);
 
   // 로딩 숨기고 종주 기록 표시
@@ -130,6 +131,14 @@ async function fetchPostStatus() {
 
 // 종주 기록 렌더링
 function renderPost(post) {
+  // 타입 표시
+  const postTypeElement = document.getElementById('postType');
+  if (post.postType === 'IN_PROGRESS') {
+    postTypeElement.textContent = '[국토종주 준비 & 진행]';
+  } else if (post.postType === 'COMPLETED') {
+    postTypeElement.textContent = '[국토종주 완료]';
+  }
+
   document.getElementById('postTitle').textContent = post.title;
   document.getElementById('postAuthor').textContent = post.nickname || post.author || '익명';
   document.getElementById('postDate').textContent = formatDate(post.createdAt);

@@ -520,11 +520,11 @@
     <section class="stats">
         <div class="stats-container">
             <div class="stat-item">
-                <div class="stat-number">12,847</div>
+                <div class="stat-number" id="completedCount">-</div>
                 <div class="stat-label">종주 완료자</div>
             </div>
             <div class="stat-item">
-                <div class="stat-number">3,492</div>
+                <div class="stat-number" id="inProgressCount">-</div>
                 <div class="stat-label">진행중인 도전</div>
             </div>
             <div class="stat-item">
@@ -647,7 +647,7 @@
     </footer>
 
     <script type="module">
-        import { post } from '/utils/fetchApi.js';
+        import { get, post } from '/utils/fetchApi.js';
         import { API_ENDPOINTS } from '/utils/apiList.js';
 
         class IndexHeader {
@@ -727,9 +727,37 @@
             }
         }
 
+        // 게시글 타입별 카운트 조회
+        async function fetchPostTypeCounts() {
+            try {
+                // 완료된 게시글 수 조회
+                const { error: completedError, result: completedResult } = await get(
+                    API_ENDPOINTS.POSTS.TYPE_COUNT('completed')
+                );
+
+                if (!completedError && completedResult?.data?.postTypeCount !== undefined) {
+                    document.getElementById('completedCount').textContent =
+                        completedResult.data.postTypeCount.toLocaleString();
+                }
+
+                // 진행중인 게시글 수 조회
+                const { error: inProgressError, result: inProgressResult } = await get(
+                    API_ENDPOINTS.POSTS.TYPE_COUNT('in_progress')
+                );
+
+                if (!inProgressError && inProgressResult?.data?.postTypeCount !== undefined) {
+                    document.getElementById('inProgressCount').textContent =
+                        inProgressResult.data.postTypeCount.toLocaleString();
+                }
+            } catch (error) {
+                console.error('게시글 타입별 카운트 조회 실패:', error);
+            }
+        }
+
         // 페이지 로드 시 초기화
         document.addEventListener("DOMContentLoaded", () => {
             new IndexHeader();
+            fetchPostTypeCounts();
         });
     </script>
 </body>
