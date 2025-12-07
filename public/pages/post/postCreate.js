@@ -4,12 +4,16 @@ import { get, post } from '../../utils/fetchApi.js';
 import { API_ENDPOINTS } from '../../utils/apiList.js';
 
 let awayTrigger = false;
+const MAX_IMAGES = 5;
+const MAX_IMAGE_SIZE = 5 * 1024 * 1024; // 5MB
+let selectedImages = [];
 
 // 페이지 로드 시 실행
 document.addEventListener('DOMContentLoaded', () => {
   initFormHandlers();
   initCharacterCount();
   initTypeSelector();
+  initImageUploader();
 });
 
 // 로그인 상태 체크
@@ -80,6 +84,87 @@ function initTypeSelector() {
   });
 }
 
+// 이미지 업로더 초기화
+function initImageUploader() {
+  const imageInput = document.getElementById('postImages');
+
+  if (!imageInput) return;
+
+  imageInput.addEventListener('change', (e) => {
+    const files = Array.from(e.target.files || []);
+    if (!files.length) return;
+
+    handleImageSelection(files);
+    imageInput.value = '';
+  });
+}
+
+// 이미지 유효성 체크 및 상태 업데이트
+function handleImageSelection(files) {
+  const validFiles = [];
+
+  files.forEach((file) => {
+    if (!file.type.startsWith('image/')) {
+      window.modal.alert('이미지 파일만 업로드 가능합니다.', '알림');
+      return;
+    }
+
+    if (file.size > MAX_IMAGE_SIZE) {
+      window.modal.alert('이미지 파일은 5MB 이하만 업로드 가능합니다.', '알림');
+      return;
+    }
+
+    validFiles.push(file);
+  });
+
+  if (selectedImages.length + validFiles.length > MAX_IMAGES) {
+    window.modal.alert(`이미지는 최대 ${MAX_IMAGES}장까지 등록할 수 있습니다.`, '알림');
+    validFiles.splice(MAX_IMAGES - selectedImages.length);
+  }
+
+  selectedImages = [...selectedImages, ...validFiles];
+  renderImagePreviews();
+}
+
+// 이미지 미리보기 렌더링
+function renderImagePreviews() {
+  const previewContainer = document.getElementById('imagePreviewList');
+  if (!previewContainer) return;
+
+  previewContainer.innerHTML = '';
+
+  if (!selectedImages.length) {
+    return;
+  }
+
+  selectedImages.forEach((file, index) => {
+    const reader = new FileReader();
+
+    reader.onload = (event) => {
+      const item = document.createElement('div');
+      item.className = 'image-preview-item';
+      item.innerHTML = `
+        <button type="button" class="image-remove-button" data-index="${index}">×</button>
+        <img src="${event.target.result}" alt="${file.name}" class="image-preview-thumb" />
+        <div class="image-preview-name" title="${file.name}">${file.name}</div>
+      `;
+
+      previewContainer.appendChild(item);
+
+      const removeButton = item.querySelector('.image-remove-button');
+      removeButton.addEventListener('click', () => removeImage(index));
+    };
+
+    reader.readAsDataURL(file);
+  });
+}
+
+// 선택한 이미지 제거
+function removeImage(index) {
+  selectedImages = selectedImages.filter((_, i) => i !== index);
+  renderImagePreviews();
+}
+
 // 글자 수 카운터 초기화
 function initCharacterCount() {
   const titleInput = document.getElementById('postTitle');
@@ -137,10 +222,10 @@ async function handleSubmit(e) {
   btnSubmit.classList.add('loading');
 
   try {
-    await createPost(title, type, content);
+    await createPost(title, type, content, selectedImages);
   } catch (error) {
     console.error('종주 기록 작성 실패:', error);
-    await window.modal.alert('종주 기록 작성에 실패했습니다.<br>잠시 후 다시 시도해주세요.', '오류');
+    await window.modal.alert(error.message || '종주 기록 작성에 실패했습니다.<br>잠시 후 다시 시도해주세요.', '오류');
   } finally {
     // 버튼 활성화 및 로딩 상태 해제
     btnSubmit.disabled = false;
@@ -157,8 +242,8 @@ function validateForm(title, type, content) {
   //   return false;
   // }
 
-  if (title.length > 26) {
-    window.modal.alert('제목은 최대 26자까지 입력 가능합니다.', '입력 오류');
+  if (title.length > 40) {
+    window.modal.alert('제목은 최대 40자까지 입력 가능합니다.', '입력 오류');
     document.getElementById('postTitle').focus();
     return false;
   }
@@ -187,12 +272,17 @@ function validateForm(title, type, content) {
 }
 
 // 종주 기록 작성 API 호출
-async function createPost(title, type, content) {
-  const { error, result } = await post('/posts', {
-    title: title,
-    type: type,
-    content: content
-  }, { auth: true });
+async function createPost(title, type, content, images = []) {
+  const formData = new FormData();
+  formData.append('title', title);
+  formData.append('type', type);
+  formData.append('content', content);
+
+  images.forEach((file) => {
+    formData.append('postImages', file);
+  });
+
+  const { error, result } = await post(API_ENDPOINTS.POSTS.CREATE, formData, { auth: true });
 
   // 에러 처리
   if (error) {

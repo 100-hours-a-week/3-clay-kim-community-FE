@@ -154,11 +154,7 @@
 .comment-author {
   display: flex;
   align-items: center;
-  gap: 8px;
-}
-
-.comment-author-icon {
-  font-size: 16px;
+  gap: 6px;
 }
 
 .comment-author-name {
