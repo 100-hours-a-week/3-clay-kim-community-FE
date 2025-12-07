@@ -1,8 +1,9 @@
 import { post } from '/utils/fetchApi.js';
-import { API_ENDPOINTS } from '/utils/apiList.js';
+import { API_ENDPOINTS, BASE_URL } from '/utils/apiList.js';
 
 class Layout {
   constructor() {
+    console.log('[Layout] Constructor 호출됨');
     this.injectLayout();
     this.initHeader();
     this.setActiveSidebar();
@@ -21,8 +22,8 @@ class Layout {
           <nav class="header-nav">
             <a href="/" class="header-logo">🚴‍♂️ 종주메이트</a>
             <div class="header-nav-links">
-              <a href="/pages/post/post.html">종주기록</a>
-              <a href="/pages/post/post.html?period=weekly">인증 코스</a>
+              <a href="/pages/post/post.html">국토종주 기록</a>
+              <a href="/pages/post/post.html?period=weekly">주간 인기 여정</a>
               <a href="/pages/post/post.html?view=top10">완주 인증 TOP 10</a>
               <div class="header-user" id="headerUser"></div>
             </div>
@@ -72,10 +73,89 @@ class Layout {
    * - 로그인 상태 확인하고 UI 렌더링
    */
   initHeader() {
+    console.log('[Layout] initHeader 호출됨');
     this.userEmail = localStorage.getItem("userEmail");
     this.userNickname = localStorage.getItem("userNickname");
+    this.userId = localStorage.getItem("userId");
+    this.userProfileImage = localStorage.getItem("userProfileImage");
+
+    console.log('[Layout] localStorage 값:', {
+      userEmail: this.userEmail,
+      userNickname: this.userNickname,
+      userId: this.userId,
+      userProfileImage: this.userProfileImage
+    });
+
     this.renderHeader();
     this.attachEventListeners();
+
+    // localStorage에 프로필 이미지가 없으면 API로 가져오기
+    if (this.userId && !this.userProfileImage) {
+      console.log('[Layout] 프로필 이미지 없음 - API 호출 시작');
+      this.loadUserProfileImage();
+    } else if (this.userProfileImage) {
+      console.log('[Layout] 프로필 이미지 있음 - localStorage 사용:', this.userProfileImage);
+    }
+  }
+
+  /**
+   * 사용자 프로필 이미지 로드
+   */
+  async loadUserProfileImage() {
+    console.log('[Layout] loadUserProfileImage 호출됨');
+    // 이미 로드 중이면 중복 호출 방지
+    if (this.isLoadingProfileImage) {
+      console.log('[Layout] 이미 로딩 중 - 중복 호출 차단');
+      return;
+    }
+    this.isLoadingProfileImage = true;
+    console.log('[Layout] 프로필 이미지 API 호출 시작');
+
+    try {
+      const apiUrl = `${BASE_URL}/users/${this.userId}`;
+      console.log('[Layout] API URL:', apiUrl);
+
+      const response = await fetch(apiUrl, {
+        headers: {
+          'Authorization': `Bearer ${localStorage.getItem('accessToken') || ''}`
+        }
+      });
+
+      console.log('[Layout] API 응답 상태:', response.status);
+
+      if (response.ok) {
+        const result = await response.json();
+        console.log('[Layout] API 응답 데이터:', result);
+
+        if (result.data?.imageUrl) {
+          this.userProfileImage = result.data.imageUrl;
+          console.log('[Layout] 프로필 이미지 URL:', this.userProfileImage);
+
+          // localStorage에도 저장
+          localStorage.setItem("userProfileImage", this.userProfileImage);
+
+          // 이미지만 DOM에서 직접 업데이트 (전체 헤더 재렌더링 방지)
+          const profileImage = document.querySelector('.header-profile-image');
+          if (profileImage) {
+            // 이미 완전한 URL인 경우 그대로 사용, 아니면 BASE_URL 붙이기
+            const newSrc = (this.userProfileImage.startsWith('http://') || this.userProfileImage.startsWith('https://'))
+              ? this.userProfileImage
+              : `${BASE_URL}/${this.userProfileImage}`;
+            console.log('[Layout] 이미지 src 업데이트:', newSrc);
+            profileImage.src = newSrc;
+          } else {
+            console.log('[Layout] .header-profile-image 요소를 찾을 수 없음');
+          }
+        } else {
+          console.log('[Layout] API 응답에 imageUrl 없음');
+        }
+      }
+    } catch (error) {
+      console.error('[Layout] 프로필 이미지 로드 실패:', error);
+    } finally {
+      this.isLoadingProfileImage = false;
+      console.log('[Layout] loadUserProfileImage 완료');
+    }
   }
 
   /**
@@ -89,21 +169,41 @@ class Layout {
    * Header에 로그인/로그아웃 버튼 렌더링
    */
   renderHeader() {
+    console.log('[Layout] renderHeader 호출됨');
     const headerUser = document.getElementById("headerUser");
-    if (!headerUser) return;
+    if (!headerUser) {
+      console.log('[Layout] headerUser 요소를 찾을 수 없음');
+      return;
+    }
 
+    console.log('[Layout] 로그인 상태:', this.isLoggedIn());
     headerUser.innerHTML = this.isLoggedIn()
       ? this.renderLoggedIn()
       : this.renderLoggedOut();
+    console.log('[Layout] renderHeader 완료');
   }
 
   /**
    * 로그인 상태 UI
    */
   renderLoggedIn() {
+    // 프로필 이미지가 있는 경우에만 표시
+    let profileImageHtml = '';
+    if (this.userProfileImage) {
+      // 이미 완전한 URL(http:// 또는 https://)인 경우 그대로 사용, 아니면 BASE_URL 붙이기
+      const profileImageUrl = (this.userProfileImage.startsWith('http://') || this.userProfileImage.startsWith('https://'))
+        ? this.userProfileImage
+        : `${BASE_URL}/${this.userProfileImage}`;
+      profileImageHtml = `<img src="${profileImageUrl}" alt="프로필" class="header-profile-image" onerror="this.style.display='none'; this.nextElementSibling.style.display='inline';">
+                          <span style="display:none;">👤</span>`;
+    } else {
+      profileImageHtml = '<span style="font-size: 24px;">👤</span>';
+    }
+
     return `
       <div class="header-user-wrapper">
         <div class="header-user-info">
+          ${profileImageHtml}
           <span class="header-user-email">${this.userNickname || "닉네임"} / ${this.userEmail || "접속 아이디"}</span>
         </div>
         <div class="user-dropdown">
@@ -161,6 +261,7 @@ class Layout {
       localStorage.removeItem("userEmail");
       localStorage.removeItem("userNickname");
       localStorage.removeItem("userId");
+      localStorage.removeItem("userProfileImage");
       window.location.href = "/";
     }
   }
@@ -183,5 +284,6 @@ class Layout {
 
 // 페이지 로드 시 Layout 초기화
 document.addEventListener("DOMContentLoaded", () => {
+  console.log('[Layout] DOMContentLoaded 이벤트 발생 - Layout 인스턴스 생성');
   new Layout();
 });

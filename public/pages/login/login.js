@@ -47,10 +47,22 @@ document.addEventListener("DOMContentLoaded", () => {
 
       // localStorage에 토큰과 이메일 저장
       if (result) {
+        console.log('[login.js] 로그인 응답 데이터:', result.data);
+        console.log('[login.js] imageUrl:', result.data.imageUrl);
+
         localStorage.setItem("userEmail", email);
         localStorage.setItem("userNickname", result.data.nickname);
         localStorage.setItem("userId", result.data.userId);
-        
+
+        // 프로필 이미지가 있으면 저장
+        if (result.data.imageUrl) {
+          console.log('[login.js] 프로필 이미지 저장:', result.data.imageUrl);
+          localStorage.setItem("userProfileImage", result.data.imageUrl);
+        } else {
+          console.log('[login.js] 프로필 이미지 없음');
+          localStorage.removeItem("userProfileImage");
+        }
+
         window.location.href = "/pages/post/post.html";
       }
 

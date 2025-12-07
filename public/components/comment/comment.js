@@ -138,7 +138,6 @@ export function createCommentHTML(comment) {
     <div class="comment-item" data-comment-id="${comment.id}">
       <div class="comment-header">
         <div class="comment-author">
-          <span class="comment-author-icon">👤</span>
           <span class="comment-author-name">${escapeHtml(comment.nickname || comment.email || '익명')}</span>
         </div>
         <div class="comment-meta">

@@ -11,7 +11,6 @@ app.get("/", (req, res) => {
   res.sendFile(path.join(__dirname, "public/pages/index/index.html"));
 });
 
-http://localhost:3000/health
 app.get("/health", (req, res) => {
   const now = new Date();
 	const hh = String(now.getHours()).padStart(2, '0');

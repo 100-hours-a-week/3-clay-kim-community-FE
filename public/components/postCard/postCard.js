@@ -5,7 +5,12 @@ import { BASE_URL } from '/utils/apiList.js';
 function createPostCard(post) {
   // 프로필 이미지 URL 처리
   const imageUrl = post.imageUrl || post.profileImage || post.authorProfileImage || post.userProfileImage || '';
-  const profileImageUrl = imageUrl ? `${BASE_URL}/${imageUrl}` : '';
+  // 이미 완전한 URL인 경우 그대로 사용, 아니면 BASE_URL 붙이기
+  const profileImageUrl = imageUrl
+    ? (imageUrl.startsWith('http://') || imageUrl.startsWith('https://'))
+      ? imageUrl
+      : `${BASE_URL}/${imageUrl}`
+    : '';
   const profileImageHtml = profileImageUrl
     ? `<img src="${escapeHtml(profileImageUrl)}" alt="프로필" class="post-author-profile-image" onerror="this.style.display='none'; this.nextElementSibling.style.display='inline';">
        <span class="post-author-profile-fallback" style="display:none;">👤</span>`

@@ -145,13 +145,17 @@ function renderPost(post) {
   document.getElementById('postContent').textContent = post.content;
   document.getElementById('postViews').textContent = post.viewCount || 0;
   document.getElementById('likeCount').textContent = post.likeCount || 0;
+  renderPostImages(post.images || post.imageUrls);
 
   // 프로필 이미지 처리
   const authorIcon = document.querySelector('.author-icon');
   const imageUrl = post.profileImageUrl || post.imageUrl || post.profileImage || post.authorProfileImage || post.userProfileImage || '';
 
   if (imageUrl) {
-    const profileImageUrl = `${BASE_URL}/${imageUrl}`;
+    // 이미 완전한 URL인 경우 그대로 사용, 아니면 BASE_URL 붙이기
+    const profileImageUrl = (imageUrl.startsWith('http://') || imageUrl.startsWith('https://'))
+      ? imageUrl
+      : `${BASE_URL}/${imageUrl}`;
     authorIcon.innerHTML = `<img src="${profileImageUrl}" alt="프로필" class="post-author-profile-image" onerror="this.style.display='none'; this.parentElement.innerHTML='👤';">`;
   } else {
     authorIcon.textContent = '👤';
@@ -170,6 +174,44 @@ function checkAuthor(post) {
     document.getElementById('btnEdit').style.display = 'inline-block';
     document.getElementById('btnDelete').style.display = 'inline-block';
   }
+}
+
+// 게시글 이미지 렌더링
+function renderPostImages(images) {
+  const container = document.getElementById('postImages');
+  if (!container) return;
+
+  // images가 문자열 배열인 경우를 대비해 형태를 통일
+  let normalized = [];
+  if (Array.isArray(images)) {
+    if (images.length && typeof images[0] === 'string') {
+      normalized = images.map((url, idx) => ({ imageId: idx, imageUrl: url }));
+    } else {
+      normalized = images;
+    }
+  }
+
+  if (!normalized.length) {
+    container.style.display = 'none';
+    container.innerHTML = '';
+    return;
+  }
+
+  const items = normalized.map((image) => {
+    const rawUrl = image?.imageUrl || image?.url || '';
+    const safeUrl = (rawUrl.startsWith('http://') || rawUrl.startsWith('https://'))
+      ? rawUrl
+      : `${BASE_URL}/${rawUrl}`;
+
+    return `
+      <div class="post-image-item">
+        <img src="${safeUrl}" alt="게시글 이미지" loading="lazy" onerror="this.style.display='none';">
+      </div>
+    `;
+  }).join('');
+
+  container.innerHTML = items;
+  container.style.display = 'grid';
 }
 
 // 댓글 목록 가져오기 (초기 로드 - 최신 댓글만)

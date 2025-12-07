@@ -64,14 +64,18 @@ async function loadUserInfo() {
 
     if (!error && result.data.imageUrl) {
       originalProfileImage = result.data.imageUrl;
-      document.getElementById('currentProfileImage').src = `${BASE_URL}/${result.data.imageUrl}`;
+      // 이미 완전한 URL인 경우 그대로 사용, 아니면 BASE_URL 붙이기
+      const profileImageUrl = (result.data.imageUrl.startsWith('http://') || result.data.imageUrl.startsWith('https://'))
+        ? result.data.imageUrl
+        : `${BASE_URL}/${result.data.imageUrl}`;
+      document.getElementById('currentProfileImage').src = profileImageUrl;
     } else {
-      // 기본 이미지 설정
-      document.getElementById('currentProfileImage').src = '/images/default-profile.png';
+      // 기본 이미지 설정 - data URL 사용
+      document.getElementById('currentProfileImage').src = 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><text y="0.9em" font-size="90">👤</text></svg>';
     }
   } catch (err) {
     console.error('프로필 이미지 로드 에러:', err);
-    document.getElementById('currentProfileImage').src = '/images/default-profile.png';
+    document.getElementById('currentProfileImage').src = 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><text y="0.9em" font-size="90">👤</text></svg>';
   }
 }
 
@@ -258,6 +262,7 @@ async function handleProfileSubmit(e) {
 
     if (imageChanged && result.data.imageUrl) {
       originalProfileImage = result.data.imageUrl;
+      localStorage.setItem('userProfileImage', result.data.imageUrl);
     }
 
     isNicknameValid = false;

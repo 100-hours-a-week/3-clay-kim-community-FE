@@ -37,19 +37,19 @@ function updatePageHeader() {
 
   const headerConfig = {
     daily: {
-      title: '🧭 오늘의 국토종주 기록',
+      title: '오늘의 국토종주 기록',
       description: '오늘 올라온 국토종주 기록을 확인하세요!'
     },
     weekly: {
-      title: '🗺️ 인기 국토종주 코스',
-      description: '이번 주 인기있는 종주 코스를 확인하세요!'
+      title: '주간 인기 여정',
+      description: '이번 주 인기있는 종주 여정을 확인하세요!'
     },
     top10: {
-      title: '🔥 완주 인증 TOP 10',
+      title: '완주 인증 TOP 10',
       description: '이번 주 가장 인기있는 완주 인증 TOP 10을 확인하세요!'
     },
     myPosts: {
-      title: '📝 내 국토종주 기록',
+      title: '내 국토종주 기록',
       description: '내가 작성한 국토종주 기록을 확인하세요!'
     }
   };

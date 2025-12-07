@@ -1,12 +1,17 @@
 // postEdit.js - 종주 기록 수정 페이지
 import { get, patch } from '/utils/fetchApi.js';
-import { API_ENDPOINTS } from '/utils/apiList.js';
+import { API_ENDPOINTS, BASE_URL } from '/utils/apiList.js';
 
 let awayTrigger = false;
 let postId = null;
 let originalTitle = '';
 let originalContent = '';
 let originalType = '';
+const MAX_IMAGES = 5;
+const MAX_IMAGE_SIZE = 5 * 1024 * 1024; // 5MB
+let selectedImages = [];
+let existingImages = [];
+let removedImageIds = [];
 
 // 페이지 로드 시 실행
 document.addEventListener('DOMContentLoaded', () => {
@@ -25,6 +30,7 @@ document.addEventListener('DOMContentLoaded', () => {
   initFormHandlers();
   initCharacterCount();
   initTypeSelector();
+  initImageUploader();
   loadPostData();
 });
 
@@ -56,6 +62,16 @@ async function loadPostData() {
   }
   
   const post = result.data;
+  if (Array.isArray(post.images)) {
+    existingImages = post.images
+      .filter((img) => img && (img.imageUrl || img.url) && img.imageId != null);
+  } else if (Array.isArray(post.imageUrls)) {
+    // 백엔드 호환용 (imageId 없이 문자열만 있는 경우)
+    existingImages = post.imageUrls.map((url, idx) => ({ imageId: idx, imageUrl: url }));
+  } else {
+    existingImages = [];
+  }
+  removedImageIds = [];
   
   // 작성자 확인 (본인이 작성한 글만 수정 가능)
   const userId = localStorage.getItem('userId');
@@ -92,6 +108,9 @@ async function loadPostData() {
   originalTitle = post.title;
   originalContent = post.content;
   originalType = formTypeValue;
+
+  // 기존 이미지 렌더링
+  renderImagePreviews();
 
   // 글자 수 초기화
   document.getElementById('titleCount').textContent = post.title.length;
@@ -142,6 +161,122 @@ function initTypeSelector() {
   });
 }
 
+// 이미지 업로더 초기화
+function initImageUploader() {
+  const imageInput = document.getElementById('postImages');
+
+  if (!imageInput) return;
+
+  imageInput.addEventListener('change', (e) => {
+    const files = Array.from(e.target.files || []);
+    if (!files.length) return;
+
+    handleImageSelection(files);
+    imageInput.value = '';
+  });
+}
+
+// 이미지 유효성 체크 및 상태 업데이트
+function handleImageSelection(files) {
+  const validFiles = [];
+
+  files.forEach((file) => {
+    if (!file.type.startsWith('image/')) {
+      window.modal.alert('이미지 파일만 업로드 가능합니다.', '알림');
+      return;
+    }
+
+    if (file.size > MAX_IMAGE_SIZE) {
+      window.modal.alert('이미지 파일은 5MB 이하만 업로드 가능합니다.', '알림');
+      return;
+    }
+
+    validFiles.push(file);
+  });
+
+  const availableSlots = MAX_IMAGES - existingImages.length - selectedImages.length;
+
+  if (availableSlots <= 0) {
+    window.modal.alert(`이미지는 최대 ${MAX_IMAGES}장까지 등록할 수 있습니다.`, '알림');
+    return;
+  }
+
+  if (validFiles.length > availableSlots) {
+    window.modal.alert(`기존 이미지를 포함해 최대 ${MAX_IMAGES}장까지 가능합니다.`, '알림');
+    validFiles.splice(availableSlots);
+  }
+
+  selectedImages = [...selectedImages, ...validFiles];
+  renderImagePreviews();
+}
+
+// 이미지 미리보기 렌더링 (기존 + 신규)
+function renderImagePreviews() {
+  const previewContainer = document.getElementById('imagePreviewList');
+  if (!previewContainer) return;
+
+  previewContainer.innerHTML = '';
+
+  // 기존 이미지
+  existingImages.forEach((img) => {
+    const rawUrl = img.imageUrl || img.url || '';
+    const safeUrl = (rawUrl.startsWith('http://') || rawUrl.startsWith('https://'))
+      ? rawUrl
+      : `${BASE_URL}/${rawUrl}`;
+
+    const item = document.createElement('div');
+    item.className = 'image-preview-item';
+    item.innerHTML = `
+      <div class="image-preview-badge">기존</div>
+      <img src="${safeUrl}" alt="기존 이미지" class="image-preview-thumb" onerror="this.style.display='none';">
+      <div class="image-preview-name" title="${safeUrl}">${rawUrl}</div>
+      <button type="button" class="image-remove-button image-remove-existing" data-id="${img.imageId}">×</button>
+    `;
+    previewContainer.appendChild(item);
+
+    const removeButton = item.querySelector('.image-remove-existing');
+    removeButton.addEventListener('click', () => removeExistingImage(img.imageId));
+  });
+
+  // 새로 선택한 이미지
+  selectedImages.forEach((file, index) => {
+    const reader = new FileReader();
+
+    reader.onload = (event) => {
+      const item = document.createElement('div');
+      item.className = 'image-preview-item';
+      item.innerHTML = `
+        <button type="button" class="image-remove-button" data-index="${index}">×</button>
+        <img src="${event.target.result}" alt="${file.name}" class="image-preview-thumb" />
+        <div class="image-preview-name" title="${file.name}">${file.name}</div>
+      `;
+
+      previewContainer.appendChild(item);
+
+      const removeButton = item.querySelector('.image-remove-button');
+      removeButton.addEventListener('click', () => removeImage(index));
+    };
+
+    reader.readAsDataURL(file);
+  });
+}
+
+// 선택한 신규 이미지 제거
+function removeImage(index) {
+  selectedImages = selectedImages.filter((_, i) => i !== index);
+  renderImagePreviews();
+}
+
+// 기존 이미지 제거 (삭제 목록에 추가)
+function removeExistingImage(imageId) {
+  if (imageId == null) return;
+  if (!removedImageIds.includes(imageId)) {
+    removedImageIds.push(imageId);
+  }
+  existingImages = existingImages.filter((img) => img.imageId !== imageId);
+  renderImagePreviews();
+}
+
 // 글자 수 카운터 초기화
 function initCharacterCount() {
   const titleInput = document.getElementById('postTitle');
@@ -189,8 +324,15 @@ async function handleSubmit(e) {
   const content = document.getElementById('postContent').value.trim();
   const btnSubmit = document.getElementById('btnSubmit');
 
-  // 변경 사항이 없는지 확인
-  if (title === originalTitle && content === originalContent && type === originalType) {
+  const hasChanges = (
+    title !== originalTitle ||
+    content !== originalContent ||
+    type !== originalType ||
+    selectedImages.length > 0 ||
+    removedImageIds.length > 0
+  );
+
+  if (!hasChanges) {
     await window.modal.alert('변경된 내용이 없습니다.', '알림');
     return;
   }
@@ -218,8 +360,8 @@ async function handleSubmit(e) {
 
 // 유효성 검사
 function validateForm(title, type, content) {
-  if (title.length > 26) {
-    window.modal.alert('제목은 최대 26자까지 입력 가능합니다.', '입력 오류');
+  if (title.length > 40) {
+    window.modal.alert('제목은 최대 40자까지 입력 가능합니다.', '입력 오류');
     document.getElementById('postTitle').focus();
     return false;
   }
@@ -240,13 +382,23 @@ function validateForm(title, type, content) {
 
 // 종주 기록 수정 API 호출
 async function updatePost(title, type, content) {
-  const { error, result } = await patch(
+  const formData = new FormData();
+  formData.append('title', title);
+  formData.append('type', type);
+  formData.append('content', content);
+
+  // 삭제할 기존 이미지 id 전송
+  if (removedImageIds.length > 0) {
+    formData.append('removeImageIds', JSON.stringify(removedImageIds));
+  }
+
+  selectedImages.forEach((file) => {
+    formData.append('postImages', file);
+  });
+
+  const { error } = await patch(
     API_ENDPOINTS.POSTS.UPDATE(postId),
-    {
-      title: title,
-      type: type,
-      content: content
-    },
+    formData,
     { auth: true }
   );
 
@@ -270,7 +422,7 @@ async function handleCancel() {
   const content = document.getElementById('postContent').value.trim();
 
   // 변경 사항이 있으면 확인
-  if (title !== originalTitle || content !== originalContent || type !== originalType) {
+  if (title !== originalTitle || content !== originalContent || type !== originalType || selectedImages.length > 0 || removedImageIds.length > 0) {
     const confirmed = await window.modal.confirm(
       '수정 중인 내용이 있습니다.<br>정말 취소하시겠습니까?',
       '수정 취소'
@@ -298,7 +450,7 @@ window.addEventListener('beforeunload', (e) => {
   }
 
   // 변경 사항이 있을 때만 경고
-  if (title !== originalTitle || content !== originalContent || type !== originalType) {
+  if (title !== originalTitle || content !== originalContent || type !== originalType || selectedImages.length > 0 || removedImageIds.length > 0) {
     e.preventDefault();
     e.returnValue = '';
   }

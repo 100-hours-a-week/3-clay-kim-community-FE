@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>종주 기록 작성 | 종주 메이트</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🚴</text></svg>">
     <link rel="stylesheet" href="/components/layout/layout.css">
     <link rel="stylesheet" href="/components/modal/modal.css">
     <link rel="stylesheet" href="/pages/post/postCreate.css">
@@ -51,12 +52,12 @@
                         type="text"
                         id="postTitle"
                         class="form-input"
-                        placeholder="제목을 입력하세요 (최대 26자)"
-                        maxlength="26"
+                        placeholder="제목을 입력하세요 (최대 40자)"
+                        maxlength="40"
                         required
                     />
                     <div class="form-help">
-                        <span id="titleCount">0</span> / 26
+                        <span id="titleCount">0</span> / 40
                     </div>
                 </div>
 
@@ -75,6 +76,31 @@
                     ></textarea>
                     <div class="form-help">
                         <span id="contentCount">0</span> / 1000
+                    </div>
+                </div>
+
+                <!-- 이미지 업로드 -->
+                <div class="form-group">
+                    <label for="postImages" class="form-label">
+                        이미지 첨부 <span class="optional">(선택)</span>
+                    </label>
+                    <div class="image-upload-wrapper">
+                        <input 
+                            type="file" 
+                            id="postImages" 
+                            accept="image/*" 
+                            multiple
+                            hidden
+                        />
+                        <label class="image-upload-dropzone" for="postImages">
+                            <div class="dropzone-icon">📷</div>
+                            <div class="dropzone-text">
+                                <strong>이미지 업로드</strong>
+                                <span>최대 5장, 한 장당 5MB 이하</span>
+                            </div>
+                            <div class="dropzone-button">파일 선택</div>
+                        </label>
+                        <div id="imagePreviewList" class="image-preview-list"></div>
                     </div>
                 </div>
 
