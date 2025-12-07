@@ -31,6 +31,7 @@ export const API_ENDPOINTS = {
       if (period) url += `&period=${period}`;
       return url;
     },
+    INDEX: '/posts/index',
     TOP10: '/posts/top10',
     CREATE: '/posts',
     DETAIL: (id) => `/posts/${id}`,
@@ -52,6 +53,7 @@ export const API_ENDPOINTS = {
 
   // 이미지 관련
   IMAGES: {
+    UPLOAD: '/images',
     STATUS: '/images/status',
   },
 
