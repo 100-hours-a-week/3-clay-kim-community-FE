@@ -72,13 +72,28 @@
   margin-bottom: 8px;
 }
 
+.post-title-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 20px;
+  margin-bottom: 16px;
+}
+
 .post-title {
   font-size: 32px;
   font-weight: 700;
   color: #333;
-  margin: 0 0 16px 0;
+  margin: 0;
   line-height: 1.4;
   word-break: break-word;
+  flex: 1;
+}
+
+.post-action-buttons {
+  display: flex;
+  gap: 8px;
+  flex-shrink: 0;
 }
 
 .post-meta {
@@ -517,8 +532,21 @@
     padding: 24px 20px;
   }
 
+  .post-title-row {
+    flex-direction: column;
+    gap: 12px;
+  }
+
   .post-title {
     font-size: 24px;
+  }
+
+  .post-action-buttons {
+    width: 100%;
+  }
+
+  .post-action-buttons button {
+    flex: 1;
   }
 
   .post-meta {
