@@ -27,7 +27,13 @@
                 <!-- 게시글 헤더 -->
                 <div class="post-header">
                     <div class="post-type" id="postType"></div>
-                    <h1 class="post-title" id="postTitle"></h1>
+                    <div class="post-title-row">
+                        <h1 class="post-title" id="postTitle"></h1>
+                        <div class="post-action-buttons">
+                            <button class="btn-secondary" id="btnEdit" style="display: none;">수정</button>
+                            <button class="btn-danger" id="btnDelete" style="display: none;">삭제</button>
+                        </div>
+                    </div>
                     <div class="post-meta">
                         <div class="post-author">
                             <span class="author-icon">👤</span>
@@ -56,10 +62,6 @@
                         <span class="icon">좋아요 ❤️</span>
                         <span class="count" id="likeCount">0</span>
                     </button>
-                    <div class="action-buttons">
-                        <button class="btn-secondary" id="btnEdit" style="display: none;">수정</button>
-                        <button class="btn-danger" id="btnDelete" style="display: none;">삭제</button>
-                    </div>
                 </div>
 
                 <!-- 댓글 섹션 -->
