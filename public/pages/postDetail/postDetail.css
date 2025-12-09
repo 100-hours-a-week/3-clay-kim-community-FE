@@ -168,6 +168,7 @@
   object-fit: cover;
   display: block;
   transition: transform 0.25s ease;
+  cursor: pointer;
 }
 
 .post-image-item:hover img {
@@ -419,6 +420,93 @@
   text-align: center;
 }
 
+/* ===== 이미지 모달 ===== */
+.image-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: fadeIn 0.2s ease;
+}
+
+.image-modal-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.9);
+  cursor: pointer;
+}
+
+.image-modal-content {
+  position: relative;
+  max-width: 90%;
+  max-height: 90%;
+  z-index: 10000;
+  animation: zoomIn 0.3s ease;
+}
+
+.image-modal-content img {
+  max-width: 100%;
+  max-height: 90vh;
+  width: auto;
+  height: auto;
+  display: block;
+  border-radius: 8px;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+}
+
+.image-modal-close {
+  position: absolute;
+  top: -40px;
+  right: -40px;
+  width: 40px;
+  height: 40px;
+  background-color: rgba(255, 255, 255, 0.9);
+  border: none;
+  border-radius: 50%;
+  font-size: 28px;
+  line-height: 1;
+  color: #333;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+.image-modal-close:hover {
+  background-color: white;
+  transform: rotate(90deg);
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes zoomIn {
+  from {
+    transform: scale(0.8);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
 /* ===== 반응형 ===== */
 @media (max-width: 768px) {
   .post-detail-container {
@@ -454,5 +542,15 @@
 
   .action-buttons button {
     flex: 1;
+  }
+
+  .image-modal-close {
+    top: 10px;
+    right: 10px;
+  }
+
+  .image-modal-content {
+    max-width: 95%;
+    max-height: 95%;
   }
 }

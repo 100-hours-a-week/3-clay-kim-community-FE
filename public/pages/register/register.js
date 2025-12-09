@@ -201,7 +201,8 @@ document.addEventListener("DOMContentLoaded", () => {
         pwError.style.color = "#e60012";
         return;
       } else {
-        pwError.textContent = "";
+        pwError.textContent = "사용 가능한 비밀번호입니다.";
+        pwError.style.color = "#03c75a";
       }
 
       if (!pw.value || !pwConfirm.value) {

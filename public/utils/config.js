@@ -5,7 +5,7 @@ const isDev = window.location.hostname === 'localhost';
 export const API_CONFIG = {
   BASE_URL: isDev 
     ? 'http://localhost:8080/api'
-    : 'https://amumal.duckdns.org/api',
+    : 'https://seonjun.store/api',
   TIMEOUT: 10000, // 10초
 
   // 기본 헤더

@@ -139,22 +139,20 @@ export function createCommentHTML(comment) {
       <div class="comment-header">
         <div class="comment-author">
           <span class="comment-author-name">${escapeHtml(comment.nickname || comment.email || '익명')}</span>
-        </div>
-        <div class="comment-meta">
           <span class="comment-date">${formatTime(comment.createdAt)}</span>
-          ${isAuthor ? `
-            <div class="comment-actions">
-              <button class="btn-comment-edit" data-comment-id="${comment.id}">
-                <span class="icon">✏️</span>
-                수정
-              </button>
-              <button class="btn-comment-delete" data-comment-id="${comment.id}">
-                <span class="icon">🗑️</span>
-                삭제
-              </button>
-            </div>
-          ` : ''}
         </div>
+        ${isAuthor ? `
+          <div class="comment-actions">
+            <button class="btn-comment-edit" data-comment-id="${comment.id}">
+              <span class="icon">✏️</span>
+              수정
+            </button>
+            <button class="btn-comment-delete" data-comment-id="${comment.id}">
+              <span class="icon">🗑️</span>
+              삭제
+            </button>
+          </div>
+        ` : ''}
       </div>
       <div class="comment-content" data-original-content="${escapeHtml(comment.content)}">${escapeHtml(comment.content)}</div>
       <div class="comment-edit-form" style="display: none;">

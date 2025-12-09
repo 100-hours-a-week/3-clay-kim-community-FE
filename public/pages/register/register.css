@@ -4,49 +4,281 @@ body {
   color: #333;
 }
 
+.main-content {
+  min-height: calc(100vh - 60px);
+  display: flex;
+}
+
 .container {
   display: flex;
-  height: 100vh;
+  width: 100%;
+  min-height: calc(100vh - 60px);
 }
 
 /* 왼쪽 */
 .intro-section {
-  flex: 1;
-  background-color: #fafafa;
+  flex: 0.7;
+  background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
   display: flex;
   justify-content: center;
   align-items: center;
+  padding: 40px;
 }
 
 .intro-inner {
-  max-width: 480px;
-  text-align: left;
+  max-width: 550px;
+  text-align: center;
+  padding: 20px;
+  width: 100%;
+}
+
+.hero-animation {
+  position: relative;
+  height: 130px;
+  margin-bottom: 20px;
+  overflow: hidden;
+  background: linear-gradient(to bottom, #e3f2fd 0%, #fff9c4 100%);
+  border-radius: 12px;
+  padding: 10px 0;
+  width: 100%;
+  max-width: 500px;
+}
+
+.road {
+  position: absolute;
+  bottom: 10px;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: repeating-linear-gradient(
+    to right,
+    #666 0px,
+    #666 20px,
+    transparent 20px,
+    transparent 40px
+  );
+}
+
+.mountain {
+  position: absolute;
+  font-size: 32px;
+  opacity: 0.6;
+  z-index: 0;
+}
+
+.mountain-1 {
+  left: 15%;
+  bottom: 8px;
+}
+
+.mountain-2 {
+  right: 20%;
+  bottom: 8px;
+}
+
+.tree {
+  position: absolute;
+  font-size: 28px;
+  left: 60%;
+  bottom: 12px;
+  opacity: 0.7;
+}
+
+.car {
+  font-size: 32px;
+  position: absolute;
+  bottom: 18px;
+  animation: carDrive 6s linear infinite;
+  z-index: 2;
+}
+
+.cyclist {
+  font-size: 40px;
+  position: absolute;
+  animation: ride 10s ease-in-out infinite;
+  z-index: 3;
+}
+
+.hiker {
+  font-size: 36px;
+  position: absolute;
+  animation: walk 14s ease-in-out infinite;
+  z-index: 3;
+}
+
+@keyframes ride {
+  0% {
+    left: -60px;
+    bottom: 13px;
+    transform: scaleX(1);
+  }
+  15% {
+    bottom: 28px;
+    transform: scaleX(1);
+  }
+  25% {
+    bottom: 18px;
+    transform: scaleX(1);
+  }
+  35% {
+    bottom: 33px;
+    transform: scaleX(1);
+  }
+  49% {
+    left: calc(100% + 20px);
+    bottom: 13px;
+    transform: scaleX(1);
+  }
+  50% {
+    left: calc(100% + 20px);
+    bottom: 13px;
+    transform: scaleX(-1);
+  }
+  65% {
+    bottom: 28px;
+    transform: scaleX(-1);
+  }
+  75% {
+    bottom: 23px;
+    transform: scaleX(-1);
+  }
+  85% {
+    bottom: 33px;
+    transform: scaleX(-1);
+  }
+  99% {
+    left: -60px;
+    bottom: 13px;
+    transform: scaleX(-1);
+  }
+  100% {
+    left: -60px;
+    bottom: 13px;
+    transform: scaleX(1);
+  }
+}
+
+@keyframes walk {
+  0% {
+    left: -60px;
+    bottom: 13px;
+    transform: scaleX(1);
+  }
+  20% {
+    bottom: 35px;
+    transform: scaleX(1);
+  }
+  30% {
+    bottom: 20px;
+    transform: scaleX(1);
+  }
+  40% {
+    bottom: 40px;
+    transform: scaleX(1);
+  }
+  49% {
+    left: calc(100% + 20px);
+    bottom: 13px;
+    transform: scaleX(1);
+  }
+  50% {
+    left: calc(100% + 20px);
+    bottom: 13px;
+    transform: scaleX(-1);
+  }
+  70% {
+    bottom: 35px;
+    transform: scaleX(-1);
+  }
+  80% {
+    bottom: 25px;
+    transform: scaleX(-1);
+  }
+  90% {
+    bottom: 38px;
+    transform: scaleX(-1);
+  }
+  99% {
+    left: -60px;
+    bottom: 13px;
+    transform: scaleX(-1);
+  }
+  100% {
+    left: -60px;
+    bottom: 13px;
+    transform: scaleX(1);
+  }
+}
+
+@keyframes carDrive {
+  0% {
+    left: 100%;
+    transform: scaleX(1);
+  }
+  100% {
+    left: -80px;
+    transform: scaleX(1);
+  }
 }
 
 .title {
-  font-size: 36px;
-  color: #e60012;
+  font-size: 42px;
+  font-weight: 800;
+  color: #2c7a7b;
+  margin-bottom: 12px;
+  line-height: 1.2;
+  letter-spacing: -0.5px;
 }
 
 .subtitle {
-  font-size: 20px;
-  margin-bottom: 20px;
+  font-size: 22px;
+  color: #495057;
+  margin-bottom: 40px;
+  font-weight: 500;
+  line-height: 1.4;
 }
 
 .benefits {
   list-style: none;
   padding: 0;
-  margin-bottom: 30px;
+  margin-bottom: 50px;
+}
+
+.benefits li {
+  font-size: 16px;
+  color: #495057;
+  margin-bottom: 16px;
+  padding-left: 28px;
+  position: relative;
+  line-height: 1.6;
+}
+
+.benefits li::before {
+  content: "✓";
+  position: absolute;
+  left: 0;
+  color: #2c7a7b;
+  font-weight: bold;
+  font-size: 18px;
 }
 
 .login-text {
-  margin-top: 20px;
+  margin-top: 30px;
+  font-size: 15px;
+  color: #6c757d;
 }
 
 .login-link {
-  color: #0066cc;
-  font-weight: bold;
+  color: #2c7a7b;
+  font-weight: 600;
   text-decoration: none;
+  margin-left: 8px;
+  transition: all 0.2s ease;
+}
+
+.login-link:hover {
+  color: #234e52;
+  text-decoration: underline;
 }
 
 /* 오른쪽 */

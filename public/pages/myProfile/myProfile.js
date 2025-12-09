@@ -435,9 +435,10 @@ async function handleDeleteAccount() {
   if (!password) return;
 
   try {
-    const { error, result } = await fetchApi(API_ENDPOINTS.USERS.DELETE_ACCOUNT, {
-      method: 'DELETE',
-      body: { password },
+    const userId = localStorage.getItem('userId');
+    const { error, result } = await fetchApi(API_ENDPOINTS.USERS.DELETE_ACCOUNT(userId), {
+      method: 'PATCH',
+      body: { currentPassword: password },
       auth: true
     });
 

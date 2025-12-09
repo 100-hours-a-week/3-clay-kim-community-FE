@@ -205,7 +205,7 @@ function renderPostImages(images) {
 
     return `
       <div class="post-image-item">
-        <img src="${safeUrl}" alt="게시글 이미지" loading="lazy" onerror="this.style.display='none';">
+        <img src="${safeUrl}" alt="게시글 이미지" loading="lazy" onerror="this.style.display='none';" onclick="openImageModal('${safeUrl}')">
       </div>
     `;
   }).join('');
@@ -554,8 +554,58 @@ function formatDate(timestamp) {
 function showError(message) {
   document.getElementById('loading').style.display = 'none';
   document.getElementById('postDetail').style.display = 'none';
-  
+
   const errorState = document.getElementById('errorState');
   errorState.style.display = 'block';
   errorState.querySelector('.error-message').textContent = message;
 }
+
+/**
+ * 이미지 모달 열기
+ */
+window.openImageModal = function(imageUrl) {
+  const modal = document.getElementById('imageModal');
+  const modalImage = document.getElementById('modalImage');
+
+  modalImage.src = imageUrl;
+  modal.style.display = 'flex';
+
+  // body 스크롤 막기
+  document.body.style.overflow = 'hidden';
+};
+
+/**
+ * 이미지 모달 닫기
+ */
+function closeImageModal() {
+  const modal = document.getElementById('imageModal');
+  modal.style.display = 'none';
+
+  // body 스크롤 복원
+  document.body.style.overflow = '';
+}
+
+// 이미지 모달 이벤트 리스너 등록
+document.addEventListener('DOMContentLoaded', () => {
+  // 닫기 버튼 클릭
+  const closeBtn = document.querySelector('.image-modal-close');
+  if (closeBtn) {
+    closeBtn.addEventListener('click', closeImageModal);
+  }
+
+  // 배경(오버레이) 클릭
+  const overlay = document.querySelector('.image-modal-overlay');
+  if (overlay) {
+    overlay.addEventListener('click', closeImageModal);
+  }
+
+  // ESC 키로 닫기
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') {
+      const modal = document.getElementById('imageModal');
+      if (modal && modal.style.display === 'flex') {
+        closeImageModal();
+      }
+    }
+  });
+});

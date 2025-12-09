@@ -21,6 +21,7 @@ export const API_ENDPOINTS = {
     GET_USER: (userId) => `/users/${userId}`,
     UPDATE_PASSWORD: '/users/password',
     UPDATE_USER: (userId) => `/users/${userId}`,
+    DELETE_ACCOUNT: (userId) => `/users/${userId}/deactivation`,
   },
   
   // 게시글 관련
