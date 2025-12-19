@@ -475,9 +475,7 @@ async function handleCommentSubmit() {
     // 입력창 초기화
     commentInput.value = '';
     document.getElementById('commentLength').textContent = '0';
-    
-    await window.modal.alert('댓글이 작성되었습니다.', '완료');
-    
+
     // 댓글 목록 새로고침 (아코디언 다시 렌더링)
     await fetchComments();
     
