@@ -3,6 +3,26 @@ const path = require("path");
 
 const app = express();
 
+// config.js를 환경변수 기반으로 동적 생성하여 서빙
+app.get("/utils/config.js", (req, res) => {
+  const apiBaseUrl = process.env.API_BASE_URL || "http://localhost:80/api";
+
+  const configScript = `
+export const API_CONFIG = {
+  BASE_URL: '${apiBaseUrl}',
+  TIMEOUT: 10000,
+
+  getHeaders(includeAuth = false) {
+    const headers = {
+      'Content-Type': 'application/json',
+    };
+    return headers;
+  }
+};
+`;
+  res.type("application/javascript").send(configScript);
+});
+
 // public 폴더 안의 정적 파일 전부 제공
 app.use(express.static(path.join(__dirname, "public")));
 
