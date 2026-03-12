@@ -63,43 +63,76 @@ jobs:
       - name: Send SSM Command
         run: |
           set -eu
+          APP_INSTANCE_ID=$(aws ec2 describe-instances \
+            --region ${{ secrets.AWS_REGION }} \
+            --filters \
+              "Name=tag:Environment,Values=prod" \
+              "Name=tag:DeployTarget,Values=community-app" \
+              "Name=instance-state-name,Values=running" \
+            --query "Reservations[].Instances[].InstanceId | [0]" \
+            --output text)
+
+          if [ -z "$APP_INSTANCE_ID" ] || [ "$APP_INSTANCE_ID" = "None" ]; then
+            echo "ERROR: deploy target instance not found"
+            exit 1
+          fi
+
+          cat > /tmp/frontend-deploy-params.json <<EOF
+          {
+            "commands": [
+              "set -e",
+              "cd ${FRONTEND_APP_DIR}",
+              "AWS_ACCOUNT_ID=${{ secrets.AWS_ACCOUNT_ID }} AWS_REGION=${{ secrets.AWS_REGION }} FRONT_REPOSITORY=${{ secrets.ECR_REPOSITORY }} ./deploy.sh frontend latest",
+              "docker inspect -f '{{.State.Running}}' community-frontend | grep true",
+              "docker inspect -f '{{.State.Running}}' community-nginx | grep true",
+              "curl -fsS http://127.0.0.1:3000/health > /dev/null"
+            ]
+          }
+          EOF
+
           COMMAND_ID=$(aws ssm send-command \
             --region ${{ secrets.AWS_REGION }} \
             --document-name "AWS-RunShellScript" \
-            --targets "Key=tag:Environment,Values=prod" "Key=tag:DeployTarget,Values=community-app" \
-            --comment "Deploy Frontend" \
-            --parameters "commands=[\"cd ${FRONTEND_APP_DIR}\",\"export FRONTEND_IMAGE=${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com/${{ secrets.ECR_REPOSITORY }}:latest\",\"docker compose pull frontend\",\"docker compose up -d --force-recreate frontend\"]" \
+            --instance-ids "$APP_INSTANCE_ID" \
+            --comment "Deploy Frontend via deploy.sh" \
+            --parameters file:///tmp/frontend-deploy-params.json \
             --query "Command.CommandId" \
             --output text)
 
-          echo "SSM_COMMAND_ID=${COMMAND_ID}"
-          for i in {1..30}; do
-            STATUS=$(aws ssm list-command-invocations \
-              --region ${{ secrets.AWS_REGION }} \
-              --command-id "$COMMAND_ID" \
-              --query "CommandInvocations[0].Status" \
-              --output text)
-
-            echo "SSM status: $STATUS"
-
-            if [ "$STATUS" = "Success" ]; then
-              break
-            elif [ "$STATUS" = "Failed" ] || [ "$STATUS" = "TimedOut" ] || [ "$STATUS" = "Cancelling" ] || [ "$STATUS" = "Cancelled" ]; then
-              aws ssm list-command-invocations \
-                --region ${{ secrets.AWS_REGION }} \
-                --command-id "$COMMAND_ID" \
-                --details \
-                --query "CommandInvocations[].{InstanceId:InstanceId,Status:Status,Output:CommandPlugins[0].Output}" \
-                --output table
-              exit 1
-            fi
-
-            sleep 10
-          done
-
-          aws ssm list-command-invocations \
+          aws ssm wait command-executed \
             --region ${{ secrets.AWS_REGION }} \
             --command-id "$COMMAND_ID" \
-            --details \
-            --query "CommandInvocations[].{InstanceId:InstanceId,Status:Status,Output:CommandPlugins[0].Output}" \
-            --output table
+            --instance-id "$APP_INSTANCE_ID"
+
+          echo "SSM_COMMAND_ID=${COMMAND_ID}"
+          STATUS=$(aws ssm get-command-invocation \
+            --region ${{ secrets.AWS_REGION }} \
+            --command-id "$COMMAND_ID" \
+            --instance-id "$APP_INSTANCE_ID" \
+            --query "StatusDetails" \
+            --output text)
+
+          STDOUT=$(aws ssm get-command-invocation \
+            --region ${{ secrets.AWS_REGION }} \
+            --command-id "$COMMAND_ID" \
+            --instance-id "$APP_INSTANCE_ID" \
+            --query "StandardOutputContent" \
+            --output text)
+
+          STDERR=$(aws ssm get-command-invocation \
+            --region ${{ secrets.AWS_REGION }} \
+            --command-id "$COMMAND_ID" \
+            --instance-id "$APP_INSTANCE_ID" \
+            --query "StandardErrorContent" \
+            --output text)
+
+          printf '%s\n' "$STDOUT"
+
+          if [ "$STDERR" != "None" ]; then
+            printf '%s\n' "$STDERR" >&2
+          fi
+
+          if [ "$STATUS" != "Success" ]; then
+            echo "Deployment failed: $STATUS" >&2
+            exit 1
+          fi

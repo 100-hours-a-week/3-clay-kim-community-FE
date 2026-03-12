@@ -1,4 +1,4 @@
-import { post } from '/utils/fetchApi.js';
+import { get, post } from '/utils/fetchApi.js';
 import { API_ENDPOINTS, BASE_URL } from '/utils/apiList.js';
 import {
     DEFAULT_PROFILE_IMAGE,
@@ -98,7 +98,6 @@ class Layout {
         this.renderHeader();
         this.attachEventListeners();
 
-        // localStorage에 프로필 이미지가 없으면 API로 가져오기
         if (this.userId && !this.userProfileImage) {
             console.log('[Layout] 프로필 이미지 없음 - API 호출 시작');
             this.loadUserProfileImage();
@@ -115,7 +114,6 @@ class Layout {
      */
     async loadUserProfileImage() {
         console.log('[Layout] loadUserProfileImage 호출됨');
-        // 이미 로드 중이면 중복 호출 방지
         if (this.isLoadingProfileImage) {
             console.log('[Layout] 이미 로딩 중 - 중복 호출 차단');
             return;
@@ -124,58 +122,42 @@ class Layout {
         console.log('[Layout] 프로필 이미지 API 호출 시작');
 
         try {
-            const apiUrl = `${BASE_URL}/users/${this.userId}`;
-            console.log('[Layout] API URL:', apiUrl);
+            const endpoint = API_ENDPOINTS.USERS.GET_USER(this.userId);
+            console.log('[Layout] API endpoint:', endpoint);
 
-            const response = await fetch(apiUrl, {
+            const { error, result } = await get(endpoint, {
+                auth: true,
                 headers: {
                     Authorization: `Bearer ${localStorage.getItem('accessToken') || ''}`,
                 },
             });
 
-            console.log('[Layout] API 응답 상태:', response.status);
+            console.log('[Layout] API 응답 상태:', error?.status ?? 200);
 
-            if (response.ok) {
-                const result = await response.json();
-                console.log('[Layout] API 응답 데이터:', result);
+            if (error) {
+                console.error('[Layout] 프로필 이미지 API 응답 에러:', error);
+                return;
+            }
 
-                const profileImageValue = pickProfileImageValue(
-                    result.data?.imageUrl,
-                );
+            const profileImageValue = pickProfileImageValue(result?.data?.imageUrl);
 
-                if (profileImageValue) {
-                    this.userProfileImage = profileImageValue;
-                    console.log(
-                        '[Layout] 프로필 이미지 URL:',
-                        this.userProfileImage,
-                    );
+            if (profileImageValue) {
+                this.userProfileImage = profileImageValue;
+                console.log('[Layout] 프로필 이미지 URL:', this.userProfileImage);
+                localStorage.setItem('userProfileImage', this.userProfileImage);
+            } else {
+                this.userProfileImage = '';
+                localStorage.removeItem('userProfileImage');
+                console.log('[Layout] API 응답에 imageUrl 없음');
+            }
 
-                    // localStorage에도 저장
-                    localStorage.setItem(
-                        'userProfileImage',
-                        this.userProfileImage,
-                    );
-                } else {
-                    this.userProfileImage = '';
-                    localStorage.removeItem('userProfileImage');
-                    console.log('[Layout] API 응답에 imageUrl 없음');
-                }
-
-                // 이미지만 DOM에서 직접 업데이트 (전체 헤더 재렌더링 방지)
-                const profileImage = document.querySelector(
-                    '.header-profile-image',
-                );
-                if (profileImage) {
-                    const newSrc = resolveProfileImageUrl(
-                        this.userProfileImage,
-                    );
-                    console.log('[Layout] 이미지 src 업데이트:', newSrc);
-                    profileImage.src = newSrc;
-                } else {
-                    console.log(
-                        '[Layout] .header-profile-image 요소를 찾을 수 없음',
-                    );
-                }
+            const profileImage = document.querySelector('.header-profile-image');
+            if (profileImage) {
+                const newSrc = resolveProfileImageUrl(this.userProfileImage);
+                console.log('[Layout] 이미지 src 업데이트:', newSrc);
+                profileImage.src = newSrc;
+            } else {
+                console.log('[Layout] .header-profile-image 요소를 찾을 수 없음');
             }
         } catch (error) {
             console.error('[Layout] 프로필 이미지 로드 실패:', error);
