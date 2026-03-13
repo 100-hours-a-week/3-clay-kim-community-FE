@@ -85,7 +85,7 @@ jobs:
               "AWS_ACCOUNT_ID=${{ secrets.AWS_ACCOUNT_ID }} AWS_REGION=${{ secrets.AWS_REGION }} FRONT_REPOSITORY=${{ secrets.ECR_REPOSITORY }} ./deploy.sh frontend latest",
               "docker inspect -f '{{.State.Running}}' community-frontend | grep true",
               "docker inspect -f '{{.State.Running}}' community-nginx | grep true",
-              "ok=0; for i in $(seq 1 30); do if curl -fsS http://127.0.0.1:3000/health > /dev/null; then ok=1; break; fi; sleep 2; done; if [ \"$ok\" -ne 1 ]; then docker logs --tail 100 community-frontend; exit 1; fi"
+              "ok=0; for i in \$(seq 1 30); do if curl -fsS http://127.0.0.1:3000/health > /dev/null; then ok=1; break; fi; sleep 2; done; if [ \"\$ok\" -ne 1 ]; then docker logs --tail 100 community-frontend; exit 1; fi"
             ]
           }
           EOF
