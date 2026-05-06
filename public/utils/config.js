@@ -5,7 +5,7 @@ const isDev = window.location.hostname === 'localhost';
 export const API_CONFIG = {
   BASE_URL: isDev 
     ? 'http://localhost:80/api'
-    : 'https://seonjun.store/api',
+    : 'https://hiking.monster/api',
   TIMEOUT: 10000, // 10초
 
   // 기본 헤더
